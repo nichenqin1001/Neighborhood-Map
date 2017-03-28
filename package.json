@@ -17,7 +17,6 @@
     "webpack-dev-server": "^2.4.2"
   },
   "dependencies": {
-    "googleapis": "^18.0.0",
     "knockout": "^3.4.2",
     "normalize.css": "^6.0.0"
   }

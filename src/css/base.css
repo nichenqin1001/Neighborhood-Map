@@ -1,0 +1,15 @@
+#list {
+    position: fixed;
+    width: 340px;
+    height: 100%;
+    overflow: auto;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 340px;
+    height: 100%;
+}

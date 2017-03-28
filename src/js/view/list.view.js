@@ -1,5 +1,6 @@
-require('knockout');
+app.view = app.view || {};
 
-app.listView = (function () {
-
+app.view.list = (function () {
+    // 使用knockout渲染HTML
+    ko.applyBindings(new app.module.list.ListModule());
 }());
