@@ -1,0 +1,1 @@
+app.mapView = (function () {}());

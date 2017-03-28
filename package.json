@@ -1,0 +1,24 @@
+{
+  "name": "Neighborhood-Map",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:nichenqin1001/Neighborhood-Map.git",
+  "author": "nichenqin1001 <nichenqin@hotmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "webpack-dev-server --inline --colors --open --content-base ./dist",
+    "build": "webpack"
+  },
+  "devDependencies": {
+    "css-loader": "^0.27.3",
+    "html-webpack-plugin": "^2.28.0",
+    "style-loader": "^0.16.0",
+    "webpack": "^2.3.2",
+    "webpack-dev-server": "^2.4.2"
+  },
+  "dependencies": {
+    "googleapis": "^18.0.0",
+    "knockout": "^3.4.2",
+    "normalize.css": "^6.0.0"
+  }
+}
