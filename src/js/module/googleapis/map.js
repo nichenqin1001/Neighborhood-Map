@@ -1,5 +1,3 @@
-window.gapi = app.module.googleapi = app.module.googleapi || {};
-
 gapi.map = (function () {
     var mapOptions = {
         center: {

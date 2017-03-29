@@ -26,36 +26,8 @@ app.data = (function () {
         this.name = name;
     };
 
-    var parkLocations = [];
-
-    var request = function (apiKey, address) {
-        httpRequest = new XMLHttpRequest();
-        var url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + address + '&key=' + apiKey;
-        if (!httpRequest) {
-            alert('Giving up :( Cannot create an XMLHTTP instance');
-            return false;
-        }
-        httpRequest.onreadystatechange = function () {
-            if (httpRequest.readyState === XMLHttpRequest.DONE) {
-                if (httpRequest.status === 200) {
-                    parkLocations.push(JSON.parse(httpRequest.responseText).results[0]);
-                } else {
-                    alert('There was a problem with the request.');
-                }
-            }
-        };
-        httpRequest.open('GET', url);
-        httpRequest.send();
-    };
-
-    parkList.forEach(function (park) {
-        request(API_KEY, park);
-    });
-
-
     return {
         parkList: parkList,
-        Location: Location,
-        parkLocations: parkLocations
+        Location: Location
     };
 }());

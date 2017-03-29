@@ -13,8 +13,8 @@
         <div id="list" class="list">
             <input type="text" class="list__search-text">
             <input type="button" class="list__search-go">
-            <ul data-bind="foreach: {data: locations, as: 'location'}">
-                <li data-bind="text: location.name"></li>
+            <ul data-bind="foreach: locations">
+                <li data-bind="text: $data"></li>
             </ul>
         </div>
         <div id="map" class="map"></div>

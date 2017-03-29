@@ -1,5 +1,3 @@
-window.view = app.view = app.view || {};
-
 view.map = (function () {
     var map;
 
