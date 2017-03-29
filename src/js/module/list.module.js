@@ -9,6 +9,13 @@ modules.list = (function () {
     var ListModule = function () {
         // 存放渲染HTML文件的公园对象
         this.locations = ko.observableArray(data.parkList);
+        this.showInfoWindow = function () {
+            var location = this.location;
+            console.log(location);
+            // 隐藏地图上的默认标记
+            gapi.marker.hideMarkers(gapi.marker.markers);
+            gapi.geocoder.onListClick(location);
+        };
     };
 
     return {

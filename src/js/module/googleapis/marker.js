@@ -37,6 +37,7 @@ gapi.marker = (function () {
 
     return {
         markers: markers,
-        setMarkers: setMarkers
+        setMarkers: setMarkers,
+        hideMarkers: hideMarkers
     };
 }());

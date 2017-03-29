@@ -17,6 +17,8 @@ view.map = (function () {
         for (var i = 0; i < gapi.marker.markers.length; i++) {
             var marker = gapi.marker.markers[i];
             marker.addListener('click', function () {
+                map.setCenter(this.position);
+                map.setZoom(14);
                 gapi.infowindow.showInfoWindow(this, gapi.infowindow.mainInfoWindow);
             });
         }
