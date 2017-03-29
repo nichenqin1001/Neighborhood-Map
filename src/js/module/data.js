@@ -31,6 +31,10 @@ data = (function () {
             lat: 31.243379,
             lng: 121.439498
         }),
+        new Location('天山公园', {
+            lat: 31.2102345,
+            lng: 121.4162046
+        }),
         new Location('川沙公园', {
             lat: 31.1914997,
             lng: 121.700226
@@ -42,6 +46,14 @@ data = (function () {
         new Location('世博公园', {
             lat: 31.1873611,
             lng: 121.4867197
+        }),
+        new Location('浦东体育公园', {
+            lat: 31.2311054,
+            lng: 121.5376228
+        }),
+        new Location('世纪公园', {
+            lat: 31.212134,
+            lng: 121.543724
         })
     ];
 
