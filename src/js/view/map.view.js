@@ -19,7 +19,7 @@ view.map = (function () {
             marker.addListener('click', function () {
                 map.panTo(this.position);
                 map.setZoom(14);
-                gapi.infowindow.showInfoWindow(this, gapi.infowindow.mainInfoWindow);
+                gapi.infowindow.showInfoWindow(this);
             });
         }
     }

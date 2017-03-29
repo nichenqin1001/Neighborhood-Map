@@ -4,8 +4,59 @@
     height: 100%;
     overflow: auto;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    background-color: rgb(0, 197, 229);
+    background-color: #fafafa;
     z-index: 1;
+}
+
+.list__filter {
+    position: relative;
+    background-color: #4285F4;
+    width: 100%;
+    margin-bottom: 5px;
+}
+
+.list__filter-text {
+    padding: 5px;
+    font-size: 18px;
+    width: 330px;
+    height: 48px;
+    margin: 5px;
+    border-radius: 2px;
+}
+
+.list__filter-go {
+    position: absolute;
+    height: 34px;
+    width: 54px;
+    top: 12px;
+    right: 12px;
+}
+
+.list__locations {
+    width: 100%;
+}
+
+.list__locations__location {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    background-color: #fafafa;
+    width: 100%;
+    height: 60px;
+    font-size: 18px;
+    font-weight: 400;
+    cursor: pointer;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.list__locations__location:hover {
+    color: #fff;
+    background-color: #4285F4;
+}
+
+.list__locations__location:last-child {
+    border-bottom: none;
 }
 
 #map {

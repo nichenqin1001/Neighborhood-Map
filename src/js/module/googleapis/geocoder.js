@@ -11,6 +11,7 @@ gapi.geocoder = (function () {
                     view.map.map.setZoom(15);
                     gapi.marker.tempMarker.setPosition(location);
                     gapi.marker.tempMarker.setMap(view.map.map);
+                    gapi.infowindow.showInfoWindow(gapi.marker.tempMarker);
                 } else {
                     window.alert('No results found');
                 }

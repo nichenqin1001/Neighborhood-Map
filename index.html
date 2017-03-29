@@ -11,8 +11,10 @@
 <body>
     <div class="container">
         <div id="list" class="list">
-            <input type="text" class="list__search-text">
-            <input type="button" class="list__search-go">
+            <form class="list__filter">
+                <input type="text" class="list__filter-text">
+                <input type="button" class="list__filter-go" value="筛选">
+            </form>
             <ul class="list__locations" data-bind="foreach: locations">
                 <li class="list__locations__location" data-bind="text: $data.address,
                   click: $parent.showInfoWindow"></li>

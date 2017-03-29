@@ -7,17 +7,17 @@ gapi.infowindow = (function () {
      * @param {any} marker 被点击的marker
      * @param {any} infowindow 创建的实例infowindow
      */
-    function showInfoWindow(marker, infowindow) {
+    function showInfoWindow(marker) {
+        console.log(marker);
         var content = '<div>' + marker.title + '</div>';
-        if (infowindow.marker != marker) {
-            infowindow.marker = marker;
-            infowindow.setContent(content);
-            infowindow.open(map, marker);
+        if (mainInfoWindow.marker != marker) {
+            mainInfoWindow.marker = marker;
+            mainInfoWindow.setContent(content);
+            mainInfoWindow.open(map, marker);
         }
     }
 
     return {
-        mainInfoWindow: mainInfoWindow,
         showInfoWindow: showInfoWindow
     };
 }());
