@@ -1,4 +1,5 @@
 gapi.marker = (function () {
+    // 载入地图后显示的标志数组
     var markers = [];
     for (var i = 0; i < data.parkList.length; i++) {
         var park = data.parkList[i];
@@ -35,9 +36,13 @@ gapi.marker = (function () {
         }
     }
 
+    // 临时使用的标记
+    var tempMarker = new google.maps.Marker();
+
     return {
         markers: markers,
         setMarkers: setMarkers,
-        hideMarkers: hideMarkers
+        hideMarkers: hideMarkers,
+        tempMarker: tempMarker
     };
 }());

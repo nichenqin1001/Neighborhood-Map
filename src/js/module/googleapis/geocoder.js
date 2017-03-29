@@ -7,12 +7,10 @@ gapi.geocoder = (function () {
         }, function (results, status) {
             if (status === google.maps.GeocoderStatus.OK) {
                 if (results[1]) {
-                    view.map.map.setCenter(location);
+                    view.map.map.panTo(location);
                     view.map.map.setZoom(15);
-                    var marker = new google.maps.Marker({
-                        position: location,
-                        map: view.map.map
-                    });
+                    gapi.marker.tempMarker.setPosition(location);
+                    gapi.marker.tempMarker.setMap(view.map.map);
                 } else {
                     window.alert('No results found');
                 }
