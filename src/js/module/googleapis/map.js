@@ -1,10 +1,8 @@
 gapi.map = (function () {
+    var center = data.parkList[0].location;
     var mapOptions = {
-        center: {
-            lat: -34.397,
-            lng: 150.644
-        },
-        zoom: 8
+        center: center,
+        zoom: 14
     };
 
     return {

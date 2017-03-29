@@ -1,33 +1,51 @@
-app.data = (function () {
-    var httpRequest;
-
+data = (function () {
     var API_KEY = 'AIzaSyBCTcVF27rnK-9_vovt47HzeUIQtUAYZCU';
 
-    var parkList = [
-        "静安公园",
-        "西康公园",
-        "静安雕塑公园",
-        "上海玫瑰花园",
-        "蝴蝶湾花园",
-        "九子公园",
-        "黄浦公园",
-        "豫园",
-        "人民公园",
-        "蓬莱公园",
-        "古城公园",
-        "延中公园",
-        "广场公园",
-        "复兴公园",
-        "绍兴公园",
-        "淮海公园"
-    ];
-
-    var Location = function (name) {
-        this.name = name;
+    var Location = function (address, locationObj) {
+        this.address = address;
+        this.location = locationObj;
     };
 
+    var parkList = [
+        new Location('静安公园', {
+            lat: 31.2215488,
+            lng: 121.4460741
+        }),
+        new Location('中山公园', {
+            lat: 31.220946,
+            lng: 121.420322
+        }),
+        new Location('人民公园', {
+            lat: 31.232226,
+            lng: 121.473219
+        }),
+        new Location('徐家汇公园', {
+            lat: 31.196934,
+            lng: 121.44232
+        }),
+        new Location('长风公园', {
+            lat: 31.224667,
+            lng: 121.3968941
+        }),
+        new Location('长寿公园', {
+            lat: 31.243379,
+            lng: 121.439498
+        }),
+        new Location('川沙公园', {
+            lat: 31.1914997,
+            lng: 121.700226
+        }),
+        new Location('上海植物园', {
+            lat: 31.150018,
+            lng: 121.449875
+        }),
+        new Location('世博公园', {
+            lat: 31.1873611,
+            lng: 121.4867197
+        })
+    ];
+
     return {
-        parkList: parkList,
-        Location: Location
+        parkList: parkList
     };
 }());
