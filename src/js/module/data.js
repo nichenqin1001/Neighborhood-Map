@@ -1,4 +1,6 @@
 app.data = (function () {
+    var httpRequest;
+
     var API_KEY = 'AIzaSyBCTcVF27rnK-9_vovt47HzeUIQtUAYZCU';
 
     var parkList = [
@@ -17,153 +19,43 @@ app.data = (function () {
         "广场公园",
         "复兴公园",
         "绍兴公园",
-        "淮海公园",
-        "太平桥公园",
-        "南园公园",
-        "丽园公园",
-        "普陀公园",
-        "武宁公园",
-        "曹阳公园",
-        "长风公园",
-        "虹桥河滨公园",
-        "兰溪青年公园",
-        "宜川公园",
-        "沪太公园",
-        "管弄公园",
-        "甘泉公园",
-        "华灵公园",
-        "海棠公园",
-        "真光公园",
-        "梅川公园",
-        "未来岛公园",
-        "长寿公园",
-        "梦清园",
-        "清涧公园",
-        "双河绿地",
-        "祥和公园",
-        "衡山公园",
-        "襄阳公园",
-        "龙华烈士陵园",
-        "康健园",
-        "宋庆龄陵园",
-        "桂林公园",
-        "漕溪公园",
-        "上海植物园",
-        "光启公园",
-        "东安公园",
-        "漕河泾开发区公园",
-        "梦公园",
-        "徐家汇公园",
-        "中山公园",
-        "华山儿童公园",
-        "番禹绿地",
-        "上海动物园",
-        "天山公园",
-        "天原公园",
-        "虹桥公园",
-        "水霞公园",
-        "新泾公园",
-        "新虹桥中心花园",
-        "凯桥绿地",
-        "华山绿地",
-        "延虹绿地",
-        "闸北公园",
-        "交通公园",
-        "彭浦公园",
-        "大宁灵石公园",
-        "广中绿地",
-        "岭南公园",
-        "三泉公园",
-        "不夜城公园",
-        "昆山公园",
-        "鲁迅公园",
-        "霍山公园",
-        "惠民公园",
-        "四川北路公园",
-        "和平公园",
-        "凉城公园",
-        "丰镇公园",
-        "曲阳公园",
-        "复兴岛公园",
-        "波阳公园",
-        "杨浦公园",
-        "平凉公园",
-        "内江公园",
-        "黄兴公园",
-        "共青森林公园",
-        "松鹤公园",
-        "延春公园",
-        "工农公园",
-        "民星公园",
-        "四平科技公园",
-        "大华行知公园",
-        "桃浦公园",
-        "顾村公园",
-        "宝山烈士陵园",
-        "临江公园",
-        "月浦公园",
-        "吴淞公园",
-        "吴淞炮台湾湿地森林公园",
-        "罗溪公园",
-        "友谊公园",
-        "泗塘公园",
-        "智力公园",
-        "共和公园",
-        "永清苑",
-        "淞南公园",
-        "红园",
-        "闵行体育公园",
-        "黎安公园",
-        "嘉和公园",
-        "七宝公园",
-        "闵行公园",
-        "金塔公园",
-        "莘庄公园",
-        "莘城中央公园",
-        "吴泾公园",
-        "旗忠公园",
-        "古藤园",
-        "闵行开发区生态公园",
-        "华漕公园",
-        "航华公园",
-        "陈行公园",
-        "浦江森林公园",
-        "川沙公园",
-        "世博公园",
-        "后滩公园",
-        "长青公园",
-        "梅园公园",
-        "由由公园",
-        "蔓趣公园",
-        "泾东公园",
-        "滨江森林公园",
-        "高桥公园",
-        "杨园体育公园",
-        "高东公园",
-        "临沂公园",
-        "济阳公园",
-        "上南公园",
-        "南浦广场公园",
-        "世纪公园",
-        "广兰公园",
-        "紫薇公园",
-        "张衡公园",
-        "孙桥农业园",
-        "孙桥文化公园",
-        "华夏公园",
-        "金枫公园",
-        "古李园",
-        "龚华街心公园",
-        "赵行公园"
+        "淮海公园"
     ];
 
     var Location = function (name) {
         this.name = name;
     };
 
+    var parkLocations = [];
+
+    var request = function (apiKey, address) {
+        httpRequest = new XMLHttpRequest();
+        var url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' + address + '&key=' + apiKey;
+        if (!httpRequest) {
+            alert('Giving up :( Cannot create an XMLHTTP instance');
+            return false;
+        }
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                if (httpRequest.status === 200) {
+                    parkLocations.push(JSON.parse(httpRequest.responseText).results[0]);
+                } else {
+                    alert('There was a problem with the request.');
+                }
+            }
+        };
+        httpRequest.open('GET', url);
+        httpRequest.send();
+    };
+
+    parkList.forEach(function (park) {
+        request(API_KEY, park);
+    });
+
+
     return {
-        API_KEY: API_KEY,
         parkList: parkList,
-        Location: Location
+        Location: Location,
+        parkLocations: parkLocations
     };
 }());

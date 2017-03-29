@@ -1,6 +1,6 @@
-app.view = app.view || {};
+window.view = app.view = app.view || {};
 
-app.view.list = (function () {
+view.list = (function () {
     // 使用knockout渲染HTML
-    ko.applyBindings(new app.module.list.ListModule());
+    ko.applyBindings(new modules.list.ListModule());
 }());

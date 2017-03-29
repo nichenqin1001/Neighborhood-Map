@@ -2,9 +2,9 @@
 require('knockout');
 
 // 将list和map数据放置在app.module命名空间中
-app.module = app.module || {};
+window.modules = app.module = app.module || {};
 
-app.module.list = (function () {
+modules.list = (function () {
     // knockout绑定的对象
     var ListModule = function () {
         // 存放渲染HTML文件的公园对象

@@ -1,6 +1,6 @@
-app.view = app.view || {};
+window.view = app.view = app.view || {};
 
-app.view.map = (function () {
+view.map = (function () {
     var map;
 
     /**
@@ -8,8 +8,7 @@ app.view.map = (function () {
      * 
      */
     function initMap() {
-        map = new google.maps.Map(document.getElementById('map'), app.googleapi.map.mapOptions);
-        app.googleapi.geocoder.codeAddress();
+        map = new google.maps.Map(document.getElementById('map'), gapi.map.mapOptions);
     }
 
     initMap();

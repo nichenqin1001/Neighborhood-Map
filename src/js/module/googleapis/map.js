@@ -1,6 +1,6 @@
-app.googleapi = app.googleapi || {};
+window.gapi = app.module.googleapi = app.module.googleapi || {};
 
-app.googleapi.map = (function () {
+gapi.map = (function () {
     var mapOptions = {
         center: {
             lat: -34.397,

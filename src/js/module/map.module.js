@@ -1,2 +1,2 @@
-require('../googleapis/geocoder');
-require('../googleapis/map');
+require('./googleapis/geocoder');
+require('./googleapis/map');
