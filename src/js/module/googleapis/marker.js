@@ -37,7 +37,9 @@ gapi.marker = (function () {
     }
 
     // 临时使用的标记
-    var tempMarker = new google.maps.Marker();
+    var tempMarker = new google.maps.Marker({
+        animation: google.maps.Animation.DROP
+    });
 
     return {
         markers: markers,
