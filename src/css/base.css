@@ -3,6 +3,9 @@
     width: 340px;
     height: 100%;
     overflow: auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+    background-color: rgb(0, 197, 229);
+    z-index: 1;
 }
 
 #map {
