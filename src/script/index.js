@@ -1,7 +1,7 @@
 require('knockout');
 
 // namespace
-window.initApp = function () {
+(function () {
 
     var Location = function (address, locationObj) {
         this.address = address;
@@ -90,6 +90,10 @@ window.initApp = function () {
             return new mapModule.InfoWindow();
         },
 
+        getInfoWindow: function () {
+            return mapView.parkInfoWindow;
+        },
+
         setGeocoder: function () {
             return new mapModule.Geocoder();
         },
@@ -111,10 +115,37 @@ window.initApp = function () {
          * 
          * @param {Marker} marker 被点击的marker
          * @param {InfoWindow} infoWindow 要显示信息的infoWindow
+         * @param {string} content 显示在infoWindow中的内容
          */
         showParkInfoWindow: function (marker, infoWindow, content) {
             infoWindow.setContent(content);
-            infoWindow.open(this.getMap(), marker);
+            infoWindow.open(octopus.getMap(), marker);
+        },
+
+        /**
+         * 通过geocoder获取marker的position属性队形地点的详细信息
+         * 并使用infoWindow来显示信息
+         * 
+         * @param {Geocoder} geocoder 
+         * @param {Marker} marker 
+         */
+        getMarkerDetails: function (geocoder, marker, infoWindow) {
+            geocoder.geocode({
+                'location': marker.position
+            }, function (results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    if (results[1]) {
+                        var content = marker.title +
+                            '<br>' +
+                            results[0].formatted_address;
+                        octopus.showParkInfoWindow(marker, infoWindow, content);
+                    } else {
+                        window.alert('No results found');
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
         }
 
     };
@@ -135,21 +166,23 @@ window.initApp = function () {
             this.parkMap = octopus.setMap(document.getElementById('map')).map;
             // 初始化parkMarkers
             this.parkMarkers = octopus.setMarkers(parkList).markers;
-            // 根据数据为每一个parkMarker添加属性
-            for (var i = 0; i < parkList.length; i++) {
-                var park = parkList[i];
-                var parkMarker = this.parkMarkers[i];
-                parkMarker.setPosition(park.location);
-                parkMarker.setTitle(park.address);
-                parkMarker.addListener('click', function () {
-                    var content = '<div>' + this.title + '</div>';
-                    octopus.showParkInfoWindow(this, self.parkInfoWindow, content);
-                });
-            }
             // 初始化infoWindow
             this.parkInfoWindow = octopus.setInfoWindow().infoWindow;
             // 初始化geocoder
             this.parkGeocoder = octopus.setGeocoder().geocoder;
+            // 根据数据为每一个parkMarker添加属性
+            for (var i = 0; i < parkList.length; i++) {
+                var park = parkList[i];
+                var parkMarker = this.parkMarkers[i];
+                // 设置位置及title属性
+                parkMarker.setPosition(park.location);
+                parkMarker.setTitle(park.address);
+                // 添加点击事件，为每个parkMarker添加infoWindow
+                parkMarker.addListener('click', function () {
+                    // 在parkMarker上显示parkInfoWindow
+                    octopus.getMarkerDetails(self.parkGeocoder, this, self.parkInfoWindow);
+                });
+            }
             // 在parkMap上显示parkMarkers
             octopus.showMarkers(this.parkMarkers, this.parkMap);
         },
@@ -195,4 +228,4 @@ window.initApp = function () {
 
     octopus.initApp();
 
-};
+}());
