@@ -1,7 +1,7 @@
 require('knockout');
 
 // namespace
-(function () {
+window.initApp = function () {
 
     var Location = function (address, locationObj) {
         this.address = address;
@@ -63,6 +63,62 @@ require('knockout');
         ]
     };
 
+    var octopus = {
+
+        initApp: function () {
+            ko.applyBindings(new ListViewModule());
+            mapView.initMap();
+        },
+
+        getParkList: function () {
+            return data.parkList;
+        },
+
+        setMap: function (node) {
+            return new mapModule.Map(node);
+        },
+
+        getMap: function () {
+            return mapView.parkMap;
+        },
+
+        setMarkers: function (dataList) {
+            return new mapModule.Markers(dataList);
+        },
+
+        setInfoWindow: function () {
+            return new mapModule.InfoWindow();
+        },
+
+        setGeocoder: function () {
+            return new mapModule.Geocoder();
+        },
+
+        showMarkers: function (markers, map) {
+            markers.forEach(function (marker) {
+                marker.setMap(map);
+            });
+        },
+
+        hideMarkers: function (markers) {
+            markers.forEach(function (marker) {
+                marker.setMap(null);
+            });
+        },
+
+        /**
+         * 显示infoWindow
+         * 
+         * @param {Marker} marker 被点击的marker
+         * @param {InfoWindow} infoWindow 要显示信息的infoWindow
+         */
+        showParkInfoWindow: function (marker, infoWindow, content) {
+            infoWindow.setContent(content);
+            infoWindow.open(this.getMap(), marker);
+        }
+
+    };
+
     var ListViewModule = function () {
         this.locations = ko.observableArray(octopus.getParkList());
         this.showMarker = function () {
@@ -70,57 +126,73 @@ require('knockout');
         };
     };
 
-    var octopus = {
-
-        init: function () {
-            ko.applyBindings(new ListViewModule());
-            mapView.initMap();
-        },
-
-        getParkList: function () {
-            return data.parkList;
-        }
-
-    };
-
     var mapView = {
 
         initMap: function () {
-            this.map = new google.maps.Map(document.getElementById('map'), mapModule.mapOption);
-
-            this.markers = [];
-            for (var i = 0; i < octopus.getParkList().length; i++) {
-                var park = octopus.getParkList()[i];
-                var position = park.location;
-                var title = park.address;
-                var marker = new google.maps.Marker({
-                    position: position,
-                    title: title,
-                    animation: google.maps.Animation.DROP
+            var self = this;
+            var parkList = octopus.getParkList();
+            // 初始化并显示parkMap
+            this.parkMap = octopus.setMap(document.getElementById('map')).map;
+            // 初始化parkMarkers
+            this.parkMarkers = octopus.setMarkers(parkList).markers;
+            // 根据数据为每一个parkMarker添加属性
+            for (var i = 0; i < parkList.length; i++) {
+                var park = parkList[i];
+                var parkMarker = this.parkMarkers[i];
+                parkMarker.setPosition(park.location);
+                parkMarker.setTitle(park.address);
+                parkMarker.addListener('click', function () {
+                    var content = '<div>' + this.title + '</div>';
+                    octopus.showParkInfoWindow(this, self.parkInfoWindow, content);
                 });
-                this.markers.push(marker);
             }
-
-            this.showMarkers();
+            // 初始化infoWindow
+            this.parkInfoWindow = octopus.setInfoWindow().infoWindow;
+            // 初始化geocoder
+            this.parkGeocoder = octopus.setGeocoder().geocoder;
+            // 在parkMap上显示parkMarkers
+            octopus.showMarkers(this.parkMarkers, this.parkMap);
         },
-
-        showMarkers: function () {
-            for (var i = 0; i < this.markers.length; i++) {
-                this.markers[i].setMap(this.map);
-            }
-        }
 
     };
 
     var mapModule = {
 
-        mapOption: {
-            center: octopus.getParkList()[0].location,
-            zoom: 11
+        Map: function (node) {
+            this.mapOption = {
+                center: octopus.getParkList()[0].location,
+                zoom: 11
+            };
+            this.map = new google.maps.Map(node, this.mapOption);
+        },
+
+        Marker: function () {
+            this.marker = new google.maps.Markers();
+        },
+
+        Markers: function (dataList) {
+            var self = this;
+            this.markers = [];
+            this.markerOption = {
+                animation: google.maps.Animation.DROP
+            };
+            var marker;
+            dataList.forEach(function (data) {
+                marker = new google.maps.Marker(self.markerOption);
+                self.markers.push(marker);
+            });
+        },
+
+        InfoWindow: function () {
+            this.infoWindow = new google.maps.InfoWindow();
+        },
+
+        Geocoder: function () {
+            this.geocoder = new google.maps.Geocoder();
         }
 
     };
 
-    octopus.init();
+    octopus.initApp();
 
-}());
+};
