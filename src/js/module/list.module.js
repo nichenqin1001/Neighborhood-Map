@@ -7,7 +7,7 @@ modules.list = (function () {
         // 存放渲染HTML文件的公园对象
         // 渲染列表
         this.locations = ko.observableArray(data.parkList);
-        this.showInfoWindow = function () {
+        this.showMarker = function () {
             var location = this.location;
             // 隐藏地图上的默认标记
             gapi.marker.hideMarkers(gapi.marker.markers);

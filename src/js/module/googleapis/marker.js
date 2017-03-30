@@ -41,6 +41,10 @@ gapi.marker = (function () {
         animation: google.maps.Animation.DROP
     });
 
+    tempMarker.addListener('click', function () {
+        gapi.infowindow.showInfoWindow(this);
+    });
+
     return {
         markers: markers,
         setMarkers: setMarkers,

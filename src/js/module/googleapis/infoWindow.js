@@ -8,16 +8,23 @@ gapi.infowindow = (function () {
      * @param {any} infowindow 创建的实例infowindow
      */
     function showInfoWindow(marker) {
-        console.log(marker);
         var content = '<div>' + marker.title + '</div>';
         if (mainInfoWindow.marker != marker) {
             mainInfoWindow.marker = marker;
             mainInfoWindow.setContent(content);
             mainInfoWindow.open(map, marker);
+            mainInfoWindow.addListener('closeclick', function () {
+                mainInfoWindow.marker = null;
+            });
         }
     }
 
+    function hideInfoWindow() {
+        mainInfoWindow.marker = null;
+    }
+
     return {
-        showInfoWindow: showInfoWindow
+        showInfoWindow: showInfoWindow,
+        hideInfoWindow: hideInfoWindow
     };
 }());
