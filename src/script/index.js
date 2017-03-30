@@ -98,6 +98,12 @@ require('knockout');
             return new mapModule.Geocoder();
         },
 
+        /**
+         * 显示传入的参数Marker
+         * 
+         * @param {Marker} markers 
+         * @param {Map} map 
+         */
         showMarkers: function (markers, map) {
             markers.forEach(function (marker) {
                 marker.setMap(map);
@@ -124,23 +130,32 @@ require('knockout');
 
         /**
          * 通过geocoder获取marker的position属性队形地点的详细信息
-         * 并使用infoWindow来显示信息
+         * 并使用infoWindow来显示信息获取到的信息
          * 
          * @param {Geocoder} geocoder 
          * @param {Marker} marker 
          */
         getMarkerDetails: function (geocoder, marker, infoWindow) {
+            var content;
             geocoder.geocode({
-                'location': marker.position
+                location: marker.position
             }, function (results, status) {
                 if (status === google.maps.GeocoderStatus.OK) {
                     if (results[1]) {
-                        var content = marker.title +
-                            '<br>' +
-                            results[0].formatted_address;
+                        // 根据返回的数据生成显示在infowindow中的content
+                        content = marker.title +
+                            '<div class="infowindow__text">' +
+                            '地址：' +
+                            results[0].formatted_address +
+                            '</div>' +
+                            '<input id="more" type="button" value="查看更多信息">';
                         octopus.showParkInfoWindow(marker, infoWindow, content);
+                        document.getElementById('more').addEventListener('click', function () {
+                            console.log(this);
+                        });
                     } else {
-                        window.alert('No results found');
+                        content = 'No results found';
+                        octopus.showParkInfoWindow(marker, infoWindow, content);
                     }
                 } else {
                     window.alert('Geocoder failed due to: ' + status);
@@ -181,6 +196,7 @@ require('knockout');
                 parkMarker.addListener('click', function () {
                     // 在parkMarker上显示parkInfoWindow
                     octopus.getMarkerDetails(self.parkGeocoder, this, self.parkInfoWindow);
+                    self.parkMap.panTo(this.position);
                 });
             }
             // 在parkMap上显示parkMarkers
@@ -203,6 +219,11 @@ require('knockout');
             this.marker = new google.maps.Markers();
         },
 
+        /**
+         * 根据传入的数据dataList生成相同个数的markers
+         * 
+         * @param {array} dataList 
+         */
         Markers: function (dataList) {
             var self = this;
             this.markers = [];

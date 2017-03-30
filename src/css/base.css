@@ -67,3 +67,7 @@
     left: 340px;
     height: 100%;
 }
+
+.infowindow__text {
+    color: darkslateblue;
+}
