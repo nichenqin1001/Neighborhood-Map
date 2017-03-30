@@ -86,6 +86,18 @@ require('knockout');
             return new mapModule.Markers(dataList);
         },
 
+        getMarkers: function () {
+            return mapView.parkMarkers;
+        },
+
+        setTempMarker: function () {
+            return new mapModule.Marker();
+        },
+
+        getTempMarker: function () {
+            return mapView.tempMarker;
+        },
+
         setInfoWindow: function () {
             return new mapModule.InfoWindow();
         },
@@ -150,6 +162,7 @@ require('knockout');
                             '</div>' +
                             '<input id="more" type="button" value="查看更多信息">';
                         octopus.showParkInfoWindow(marker, infoWindow, content);
+                        octopus.getMap().panTo(marker.position);
                         document.getElementById('more').addEventListener('click', function () {
                             console.log(this);
                         });
@@ -161,14 +174,23 @@ require('knockout');
                     window.alert('Geocoder failed due to: ' + status);
                 }
             });
-        }
+        },
 
     };
 
     var ListViewModule = function () {
         this.locations = ko.observableArray(octopus.getParkList());
         this.showMarker = function () {
-            var location = this.location;
+            var position = this.location;
+            var title = this.address;
+            octopus.hideMarkers(octopus.getMarkers());
+            var tempMarker = octopus.getTempMarker();
+            tempMarker.setPosition(position);
+            tempMarker.setTitle(title);
+            tempMarker.setAnimation(google.maps.Animation.DROP);
+            tempMarker.setMap(octopus.getMap());
+            console.log(tempMarker);
+            octopus.getMarkerDetails(octopus.setGeocoder().geocoder, tempMarker, octopus.getInfoWindow());
         };
     };
 
@@ -196,11 +218,12 @@ require('knockout');
                 parkMarker.addListener('click', function () {
                     // 在parkMarker上显示parkInfoWindow
                     octopus.getMarkerDetails(self.parkGeocoder, this, self.parkInfoWindow);
-                    self.parkMap.panTo(this.position);
+
                 });
             }
             // 在parkMap上显示parkMarkers
             octopus.showMarkers(this.parkMarkers, this.parkMap);
+            this.tempMarker = octopus.setTempMarker().marker;
         },
 
     };
@@ -216,7 +239,7 @@ require('knockout');
         },
 
         Marker: function () {
-            this.marker = new google.maps.Markers();
+            this.marker = new google.maps.Marker();
         },
 
         /**
