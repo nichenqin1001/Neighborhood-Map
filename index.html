@@ -16,8 +16,12 @@
                 <input type="button" class="list__filter-go" value="筛选">
             </form>
             <ul class="list__locations" data-bind="foreach: locations">
-                <li class="list__locations__location" data-bind="text: $data.address,
-                  click: $parent.showMarker"></li>
+                <li class="list__locations__location" data-bind="click: $parent.onListClick, css: {active: $data.active}">
+                    <div class="list__locations__address" data-bind="text: $data.address"></div>
+                    <div class="list__locations__formatted_address_container" data-bind="if: $data.active,">
+                        <div class="list__locations__formatted_address" data-bind="text: $data.formatted_address"></div>
+                    </div>
+                </li>
             </ul>
         </div>
         <div id="map" class="map"></div>

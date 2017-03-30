@@ -4,8 +4,10 @@ require('knockout');
 (function () {
 
     var Location = function (address, locationObj) {
-        this.address = address;
-        this.location = locationObj;
+        this.address = ko.observable(address);
+        this.location = ko.observable(locationObj);
+        this.formatted_address = ko.observable('');
+        this.active = ko.observable(false);
     };
 
     var data = {
@@ -75,7 +77,7 @@ require('knockout');
         },
 
         setMap: function (node) {
-            return new mapModule.Map(node);
+            return new mapModule.Map(node).map;
         },
 
         getMap: function () {
@@ -83,7 +85,7 @@ require('knockout');
         },
 
         setMarkers: function (dataList) {
-            return new mapModule.Markers(dataList);
+            return new mapModule.Markers(dataList).markers;
         },
 
         getMarkers: function () {
@@ -91,7 +93,7 @@ require('knockout');
         },
 
         setTempMarker: function () {
-            return new mapModule.Marker();
+            return new mapModule.Marker().marker;
         },
 
         getTempMarker: function () {
@@ -99,7 +101,7 @@ require('knockout');
         },
 
         setInfoWindow: function () {
-            return new mapModule.InfoWindow();
+            return new mapModule.InfoWindow().infoWindow;
         },
 
         getInfoWindow: function () {
@@ -107,7 +109,7 @@ require('knockout');
         },
 
         setGeocoder: function () {
-            return new mapModule.Geocoder();
+            return new mapModule.Geocoder().geocoder;
         },
 
         /**
@@ -146,8 +148,9 @@ require('knockout');
          * 
          * @param {Geocoder} geocoder 
          * @param {Marker} marker 
+         * @param {infoWindow} infoWindow
          */
-        getMarkerDetails: function (geocoder, marker, infoWindow) {
+        getMarkerDetails: function (geocoder, marker, infoWindow, location) {
             var content;
             geocoder.geocode({
                 location: marker.position
@@ -156,13 +159,15 @@ require('knockout');
                     if (results[1]) {
                         // 根据返回的数据生成显示在infowindow中的content
                         content = marker.title +
-                            '<div class="infowindow__text">' +
+                            '<div id="formatted_address" class="infowindow__text">' +
                             '地址：' +
-                            results[0].formatted_address +
+                            results[0].formatted_address.split(" ")[0] +
                             '</div>' +
                             '<input id="more" type="button" value="查看更多信息">';
                         octopus.showParkInfoWindow(marker, infoWindow, content);
                         octopus.getMap().panTo(marker.position);
+                        if (location)
+                            location.formatted_address(results[0].formatted_address.split(" ")[0]);
                         document.getElementById('more').addEventListener('click', function () {
                             console.log(this);
                         });
@@ -174,23 +179,39 @@ require('knockout');
                     window.alert('Geocoder failed due to: ' + status);
                 }
             });
-        },
+        }
 
     };
 
     var ListViewModule = function () {
+        var self = this;
         this.locations = ko.observableArray(octopus.getParkList());
-        this.showMarker = function () {
-            var position = this.location;
-            var title = this.address;
+        this.onListClick = function () {
+            // 点击后先设置所有formatted_address为空值
+            // active属性设置为false
+            self.locations().forEach(function (location) {
+                location.formatted_address('');
+                location.active(false);
+            });
+            // 设置active为ture
+            // 添加active类
+            this.active(true);
+            // 隐藏所有标记
             octopus.hideMarkers(octopus.getMarkers());
+            // 使用新的标记标识地图
             var tempMarker = octopus.getTempMarker();
-            tempMarker.setPosition(position);
-            tempMarker.setTitle(title);
-            tempMarker.setAnimation(google.maps.Animation.DROP);
-            tempMarker.setMap(octopus.getMap());
-            console.log(tempMarker);
-            octopus.getMarkerDetails(octopus.setGeocoder().geocoder, tempMarker, octopus.getInfoWindow());
+            // 为临时标记设置属性
+            tempMarker.setOptions({
+                position: this.location(),
+                title: this.address(),
+                animation: google.maps.Animation.DROP,
+                map: octopus.getMap()
+            });
+            // 获取位置所在信息，
+            // 在地图中渲染标记和infowindow
+            // 在infowindow中显示获取到的信息，
+            // 在列表中显示该位置相应信息
+            octopus.getMarkerDetails(octopus.setGeocoder(), tempMarker, octopus.getInfoWindow(), this);
         };
     };
 
@@ -200,20 +221,20 @@ require('knockout');
             var self = this;
             var parkList = octopus.getParkList();
             // 初始化并显示parkMap
-            this.parkMap = octopus.setMap(document.getElementById('map')).map;
+            this.parkMap = octopus.setMap(document.getElementById('map'));
             // 初始化parkMarkers
-            this.parkMarkers = octopus.setMarkers(parkList).markers;
+            this.parkMarkers = octopus.setMarkers(parkList);
             // 初始化infoWindow
-            this.parkInfoWindow = octopus.setInfoWindow().infoWindow;
+            this.parkInfoWindow = octopus.setInfoWindow();
             // 初始化geocoder
-            this.parkGeocoder = octopus.setGeocoder().geocoder;
+            this.parkGeocoder = octopus.setGeocoder();
             // 根据数据为每一个parkMarker添加属性
             for (var i = 0; i < parkList.length; i++) {
                 var park = parkList[i];
                 var parkMarker = this.parkMarkers[i];
-                // 设置位置及title属性
-                parkMarker.setPosition(park.location);
-                parkMarker.setTitle(park.address);
+                // 设置position及title属性
+                parkMarker.setPosition(park.location());
+                parkMarker.setTitle(park.address());
                 // 添加点击事件，为每个parkMarker添加infoWindow
                 parkMarker.addListener('click', function () {
                     // 在parkMarker上显示parkInfoWindow
@@ -223,7 +244,12 @@ require('knockout');
             }
             // 在parkMap上显示parkMarkers
             octopus.showMarkers(this.parkMarkers, this.parkMap);
-            this.tempMarker = octopus.setTempMarker().marker;
+            // 初始化一个临时marker
+            this.tempMarker = octopus.setTempMarker();
+
+            this.tempMarker.addListener('click', function () {
+                octopus.getMarkerDetails(octopus.setGeocoder(), this, octopus.getInfoWindow());
+            });
         },
 
     };
@@ -232,7 +258,7 @@ require('knockout');
 
         Map: function (node) {
             this.mapOption = {
-                center: octopus.getParkList()[0].location,
+                center: octopus.getParkList()[0].location(),
                 zoom: 11
             };
             this.map = new google.maps.Map(node, this.mapOption);
