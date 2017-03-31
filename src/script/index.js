@@ -120,16 +120,26 @@ $(function () {
         };
         // 筛选事件
         this.onFilter = function () {
+            console.log(data.parkList);
             var inputText = this.inputText();
+            if (inputText === '') return;
             // 如果location的type值于输入不同，则删除该记录
             this.locations.remove(function (location) {
                 return location.type !== inputText;
             });
+            console.log(data.parkList); // 改变了data.parkList
             // 隐藏所有标记
             o.hideMarkers(o.getMarkers());
             mapView.parkMarkers = o.setMarkers(this.locations());
             // 根据新的locations数组重新设置标记
             o.showMarkers(o.getMarkers());
+
+        };
+        // 重置
+        this.reSet = function () {
+            console.log(data.parkList);
+            var a = data.parkList;
+            this.locations(a);
         };
     };
 

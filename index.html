@@ -13,7 +13,10 @@
         <div id="list__container">
             <div id="form">
                 <input class="form__text" type="text" data-bind="value: inputText" placeholder="例如：酒店、公园、银行">
-                <input class="form__filter" type="button" value="筛选" data-bind="click: onFilter">
+                <div class="form__filter">
+                    <input class="form__filter_button" type="button" value="重置" data-bind="click: reSet">
+                    <input class="form__filter_button" type="button" value="筛选" data-bind="click: onFilter">
+                </div>
             </div>
             <div id="list">
                 <ul class="list__locations" data-bind="foreach: locations">
