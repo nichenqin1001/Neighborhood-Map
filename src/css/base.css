@@ -3,14 +3,45 @@
     height: 100%;
 }
 
-#list {
+#list__container {
     position: fixed;
     width: 340px;
     height: 100%;
+    background-color: rgb(66, 133, 244);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-    background-color: rgba(0, 0, 0, 0.1);
     z-index: 1;
+}
+
+#form {
+    position: relative;
+    height: 60px;
+    padding: 10px 5px;
+}
+
+.form__text {
+    width: 100%;
+    height: 100%;
+    font-size: 14px;
+    padding: 0 10px;
+    border: 0;
+    outline: 0;
+}
+
+.form__filter {
+    position: absolute;
+    top: 15px;
+    right: 10px;
+    bottom: 15px;
+}
+
+#list {
+    position: absolute;
+    top: 60px;
+    bottom: 0;
+    left: 0;
+    width: 340px;
     overflow: hidden;
+    z-index: 1;
 }
 
 .list__filter {
@@ -83,6 +114,14 @@
     overflow: hidden;
     text-overflow: ellipsis;
     padding: 5px 0;
+}
+
+.info {
+    position: absolute;
+    bottom: 15px;
+    width: 100%;
+    color: #fff;
+    text-align: center;
 }
 
 #map {

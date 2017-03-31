@@ -134,6 +134,7 @@ $(function () {
     var ListViewModule = function () {
         var self = this;
         this.locations = ko.observableArray(o.getParkList());
+        this.inputText = ko.observable('');
         this.onListClick = function () {
             // 点击后先设置所有formatted_address为空值
             // active属性设置为false
@@ -160,6 +161,9 @@ $(function () {
             // 在infowindow中显示获取到的信息，
             // 在列表中显示该位置相应信息
             o.getMarkerDetails(tempMarker, this);
+        };
+        this.onFilter = function () {
+            console.log(self.inputText());
         };
     };
 
