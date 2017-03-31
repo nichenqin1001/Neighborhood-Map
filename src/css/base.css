@@ -70,13 +70,16 @@
 
 .list__locations__address,
 .list__locations__formatted_address_container {
-    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
 }
 
 .list__locations__formatted_address {
+    max-height: 40px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
     padding: 5px 0;
-    width: 100%;
-    transition: height 2s;
 }
 
 #map {

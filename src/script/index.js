@@ -4,8 +4,8 @@ require('knockout');
 (function () {
 
     var Location = function (address, locationObj) {
-        this.address = ko.observable(address);
-        this.location = ko.observable(locationObj);
+        this.address = address;
+        this.location = locationObj;
         this.formatted_address = ko.observable('');
         this.active = ko.observable(false);
     };
@@ -92,8 +92,8 @@ require('knockout');
             var tempMarker = o.getTempMarker();
             // 为临时标记设置属性
             tempMarker.setOptions({
-                position: this.location(),
-                title: this.address(),
+                position: this.location,
+                title: this.address,
                 animation: google.maps.Animation.DROP,
                 map: o.getMap()
             });
@@ -109,7 +109,7 @@ require('knockout');
 
         Map: function (node) {
             this.mapOption = {
-                center: o.getParkList()[0].location(),
+                center: o.getParkList()[0].location,
                 zoom: 14
             };
             this.map = new google.maps.Map(node, this.mapOption);
@@ -138,7 +138,10 @@ require('knockout');
         },
 
         InfoWindow: function () {
-            this.infoWindow = new google.maps.InfoWindow();
+            this.infoWindowOptions = {
+                maxWidth: 200
+            };
+            this.infoWindow = new google.maps.InfoWindow(this.infoWindowOptions);
         },
 
         Geocoder: function () {
@@ -151,6 +154,11 @@ require('knockout');
 
         StreetViewPanorama: function (node) {
             this.panoramaOptions = {
+                zoomControl: false,
+                addressControl: false,
+                fullscreenControl: false,
+                linksControl: false,
+                panControl: false,
                 pov: {
                     heading: 34,
                     pitch: 10
@@ -182,8 +190,8 @@ require('knockout');
                 var park = parkList[i];
                 var parkMarker = this.parkMarkers[i];
                 // 设置position及title属性
-                parkMarker.setPosition(park.location());
-                parkMarker.setTitle(park.address());
+                parkMarker.setPosition(park.location);
+                parkMarker.setTitle(park.address);
                 // 添加点击事件，为每个parkMarker添加infoWindow
                 parkMarker.addListener('click', function () {
                     // 在parkMarker上显示parkInfoWindow
@@ -304,6 +312,17 @@ require('knockout');
             this.getMap().setStreetView(panorama);
         },
 
+        setContent: function (marker, data) {
+            return marker.title +
+                '<div id="formatted_address" class="infowindow__text">' +
+                '地址：' +
+                data.formatted_address +
+                '</div>' +
+                '<div id="pano">' +
+                '</div>' +
+                '<input id="more" type="button" value="查看更多信息">';
+        },
+
         /**
          * 通过geocoder获取marker的position属性队形地点的详细信息
          * 并使用infoWindow来显示信息获取到的信息
@@ -318,23 +337,19 @@ require('knockout');
                 location: marker.position
             }, function (results, status) {
                 if (status === google.maps.GeocoderStatus.OK) {
-                    if (results[1]) {
+                    if (results[0]) {
                         // 根据返回的数据生成显示在infowindow中的content
-                        content = marker.title +
-                            '<div id="formatted_address" class="infowindow__text">' +
-                            '地址：' +
-                            results[0].formatted_address.split(" ")[0] +
-                            '</div>' +
-                            '<div id="pano">' +
-                            '</div>' +
-                            '<input id="more" type="button" value="查看更多信息">';
+                        content = self.setContent(marker, results[0]);
+                        // 显示infowindow
                         self.showParkInfoWindow(marker, content);
+                        // 移动地图中心
                         self.getMap().panTo(marker.position);
+                        // 显示streetview
                         pano = document.getElementById('pano');
                         self.showStreetView(marker, pano);
                         // 如果传入了park参数，则设置其formatted_address
                         if (park)
-                            park.formatted_address(results[0].formatted_address.split(" ")[0]);
+                            park.formatted_address(results[0].formatted_address);
                         document.getElementById('more').addEventListener('click', function () {
 
                         });
