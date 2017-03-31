@@ -91,15 +91,13 @@
     color: #fff;
     background-color: rgb(66, 133, 244);
     height: 70px;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #fff;
 }
 
 .list__locations__location:hover {
     color: #fff;
     background-color: rgba(66, 133, 244, .8);
-}
-
-.list__locations__location:last-child {
-    border-bottom: none;
 }
 
 .list__locations__address,

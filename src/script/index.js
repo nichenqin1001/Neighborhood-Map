@@ -5,9 +5,10 @@ require('iscroll');
 // namespace
 $(function () {
 
-    var Location = function (address, locationObj) {
+    var Location = function (address, locationObj, type) {
         this.address = address;
         this.location = locationObj;
+        this.type = type;
         this.formatted_address = ko.observable('');
         this.active = ko.observable(false);
     };
@@ -19,122 +20,77 @@ $(function () {
             new Location('京都格蘭比亞大酒店', {
                 lat: 34.9859964,
                 lng: 135.7597823
-            }),
+            }, '酒店'),
             new Location('近鐵京都車站酒店', {
                 lat: 34.9848259,
                 lng: 135.756949
-            }),
+            }, '酒店'),
             new Location('京都八條口大和皇家酒店', {
                 lat: 34.981614,
                 lng: 135.760011
-            }),
+            }, '酒店'),
             new Location('京都甘樂酒店', {
                 lat: 34.993566,
                 lng: 135.759435
-            }),
+            }, '酒店'),
             new Location('京都銀門酒店', {
                 lat: 35.010481,
                 lng: 135.762213
-            }),
-            new Location('京都翠嵐豪華精選酒店', {
-                lat: 35.013628,
-                lng: 135.673283
-            }),
+            }, '酒店'),
             new Location('京都法华俱乐部酒店', {
                 lat: 34.9873951,
                 lng: 135.7588398
-            }),
+            }, '酒店'),
             new Location('京都四條百夫長膠囊溫泉酒店', {
                 lat: 35.0034593,
                 lng: 135.7616023
-            }),
+            }, '酒店'),
             new Location('京阪京都格蘭德飯店', {
                 lat: 34.9836324,
                 lng: 135.7608894
-            }),
+            }, '酒店'),
             new Location('日本寧酒店', {
                 lat: 34.99219,
                 lng: 135.755778
-            }),
+            }, '酒店'),
             new Location('京都格兰德酒店', {
                 lat: 34.985864,
                 lng: 135.758957
-            }),
+            }, '酒店'),
             new Location('京都麗思卡爾頓酒店', {
                 lat: 35.013768,
                 lng: 135.770837
-            }),
+            }, '酒店'),
             new Location('京都新阪急酒店', {
                 lat: 34.987463,
                 lng: 135.757591
-            }),
+            }, '酒店'),
             new Location('灰姑娘酒店', {
                 lat: 35.010901,
                 lng: 135.785841
-            }),
-            new Location('京都格蘭比亞大酒店', {
-                lat: 34.9859964,
-                lng: 135.7597823
-            }),
-            new Location('近鐵京都車站酒店', {
-                lat: 34.9848259,
-                lng: 135.756949
-            }),
-            new Location('京都八條口大和皇家酒店', {
-                lat: 34.981614,
-                lng: 135.760011
-            }),
-            new Location('京都甘樂酒店', {
-                lat: 34.993566,
-                lng: 135.759435
-            }),
-            new Location('京都銀門酒店', {
-                lat: 35.010481,
-                lng: 135.762213
-            }),
-            new Location('京都翠嵐豪華精選酒店', {
-                lat: 35.013628,
-                lng: 135.673283
-            }),
-            new Location('京都法华俱乐部酒店', {
-                lat: 34.9873951,
-                lng: 135.7588398
-            }),
-            new Location('京都四條百夫長膠囊溫泉酒店', {
-                lat: 35.0034593,
-                lng: 135.7616023
-            }),
-            new Location('京阪京都格蘭德飯店', {
-                lat: 34.9836324,
-                lng: 135.7608894
-            }),
-            new Location('日本寧酒店', {
-                lat: 34.99219,
-                lng: 135.755778
-            }),
-            new Location('京都格兰德酒店', {
-                lat: 34.985864,
-                lng: 135.758957
-            }),
-            new Location('京都麗思卡爾頓酒店', {
-                lat: 35.013768,
-                lng: 135.770837
-            }),
-            new Location('京都新阪急酒店', {
-                lat: 34.987463,
-                lng: 135.757591
-            }),
-            new Location('灰姑娘酒店', {
-                lat: 35.010901,
-                lng: 135.785841
-            }),
+            }, '酒店'),
+            new Location('老香港酒家京都', {
+                lat: 35.0032389,
+                lng: 135.7591703
+            }, '餐厅'),
+            new Location('菊乃井 露庵', {
+                lat: 35.0034513,
+                lng: 135.7706684
+            }, '餐厅'),
+            new Location('らーめん千の風京都', {
+                lat: 35.004578,
+                lng: 135.76753
+            }, '餐厅'),
         ]
     };
 
     var ListViewModule = function () {
         var self = this;
+        // 渲染列表数据
         this.locations = ko.observableArray(o.getParkList());
+        // 筛选列表数据
         this.inputText = ko.observable('');
+        // 点击列表项目事件
         this.onListClick = function () {
             // 点击后先设置所有formatted_address为空值
             // active属性设置为false
@@ -162,8 +118,17 @@ $(function () {
             // 在列表中显示该位置相应信息
             o.getMarkerDetails(tempMarker, this);
         };
+        // 筛选事件
         this.onFilter = function () {
-            console.log(self.inputText());
+            var inputText = this.inputText();
+            // 如果location的type值于输入不同，则删除该记录
+            this.locations.remove(function (location) {
+                return location.type !== inputText;
+            });
+            // 隐藏所有标记
+            o.hideMarkers(o.getMarkers());
+            // 根据新的locations数组重新设置标记
+            o.showMarkers(o.setMarkers(this.locations()));
         };
     };
 
@@ -195,6 +160,11 @@ $(function () {
             var marker;
             dataList.forEach(function (data) {
                 marker = new google.maps.Marker(self.markerOption);
+                marker.setPosition(data.location);
+                marker.setTitle(data.address);
+                marker.addListener('click', function () {
+                    o.getMarkerDetails(this);
+                });
                 self.markers.push(marker);
             });
         },
@@ -247,22 +217,8 @@ $(function () {
             });
             // 初始化geocoder
             this.parkGeocoder = o.setGeocoder();
-            // 根据数据为每一个parkMarker添加属性
-            for (var i = 0; i < parkList.length; i++) {
-                var park = parkList[i];
-                var parkMarker = this.parkMarkers[i];
-                // 设置position及title属性
-                parkMarker.setPosition(park.location);
-                parkMarker.setTitle(park.address);
-                // 添加点击事件，为每个parkMarker添加infoWindow
-                parkMarker.addListener('click', function () {
-                    // 在parkMarker上显示parkInfoWindow
-                    o.getMarkerDetails(this);
-
-                });
-            }
             // 在parkMap上显示parkMarkers
-            o.showMarkers(this.parkMarkers, this.parkMap);
+            o.showMarkers(this.parkMarkers);
             // 初始化一个临时marker
             this.tempMarker = o.setTempMarker();
             // 为每个tempMarker添加点击事件
@@ -350,9 +306,9 @@ $(function () {
          * @param {Marker} markers 
          * @param {Map} map 
          */
-        showMarkers: function (markers, map) {
+        showMarkers: function (markers) {
             markers.forEach(function (marker) {
-                marker.setMap(map);
+                marker.setMap(o.getMap());
             });
         },
 
