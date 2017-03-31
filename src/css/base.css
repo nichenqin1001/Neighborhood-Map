@@ -91,3 +91,12 @@
 .infowindow__text {
     color: darkslateblue;
 }
+
+#pano {
+    width: 200px;
+    height: 200px;
+}
+
+#more {
+    display: block;
+}
