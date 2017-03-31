@@ -127,8 +127,9 @@ $(function () {
             });
             // 隐藏所有标记
             o.hideMarkers(o.getMarkers());
+            mapView.parkMarkers = o.setMarkers(this.locations());
             // 根据新的locations数组重新设置标记
-            o.showMarkers(o.setMarkers(this.locations()));
+            o.showMarkers(o.getMarkers());
         };
     };
 
