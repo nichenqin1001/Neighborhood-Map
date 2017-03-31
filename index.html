@@ -10,11 +10,7 @@
 
 <body>
     <div class="container">
-        <div id="list" class="list">
-            <form class="list__filter">
-                <input type="text" class="list__filter-text">
-                <input type="button" class="list__filter-go" value="筛选">
-            </form>
+        <div id="list">
             <ul class="list__locations" data-bind="foreach: locations">
                 <li class="list__locations__location" data-bind="click: $parent.onListClick, css: {active: $data.active}">
                     <div class="list__locations__address" data-bind="text: $data.address"></div>
@@ -26,6 +22,7 @@
         </div>
         <div id="map" class="map"></div>
     </div>
+
     <script src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBCTcVF27rnK-9_vovt47HzeUIQtUAYZCU"></script>
 </body>
 

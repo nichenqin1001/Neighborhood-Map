@@ -17,7 +17,10 @@ module.exports = {
     },
     plugins: [
         new Webpack.ProvidePlugin({
-            ko: 'knockout'
+            $: 'jquery',
+            jQuery: 'jquery',
+            ko: 'knockout',
+            IScroll: 'iscroll'
         }),
         new HtmlWebpackPlugin({
             template: 'index.html'

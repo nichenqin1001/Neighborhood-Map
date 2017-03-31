@@ -1,7 +1,9 @@
 require('knockout');
+require('jquery');
+require('iscroll');
 
 // namespace
-(function () {
+$(function () {
 
     var Location = function (address, locationObj) {
         this.address = address;
@@ -69,7 +71,63 @@ require('knockout');
             new Location('灰姑娘酒店', {
                 lat: 35.010901,
                 lng: 135.785841
-            })
+            }),
+            new Location('京都格蘭比亞大酒店', {
+                lat: 34.9859964,
+                lng: 135.7597823
+            }),
+            new Location('近鐵京都車站酒店', {
+                lat: 34.9848259,
+                lng: 135.756949
+            }),
+            new Location('京都八條口大和皇家酒店', {
+                lat: 34.981614,
+                lng: 135.760011
+            }),
+            new Location('京都甘樂酒店', {
+                lat: 34.993566,
+                lng: 135.759435
+            }),
+            new Location('京都銀門酒店', {
+                lat: 35.010481,
+                lng: 135.762213
+            }),
+            new Location('京都翠嵐豪華精選酒店', {
+                lat: 35.013628,
+                lng: 135.673283
+            }),
+            new Location('京都法华俱乐部酒店', {
+                lat: 34.9873951,
+                lng: 135.7588398
+            }),
+            new Location('京都四條百夫長膠囊溫泉酒店', {
+                lat: 35.0034593,
+                lng: 135.7616023
+            }),
+            new Location('京阪京都格蘭德飯店', {
+                lat: 34.9836324,
+                lng: 135.7608894
+            }),
+            new Location('日本寧酒店', {
+                lat: 34.99219,
+                lng: 135.755778
+            }),
+            new Location('京都格兰德酒店', {
+                lat: 34.985864,
+                lng: 135.758957
+            }),
+            new Location('京都麗思卡爾頓酒店', {
+                lat: 35.013768,
+                lng: 135.770837
+            }),
+            new Location('京都新阪急酒店', {
+                lat: 34.987463,
+                lng: 135.757591
+            }),
+            new Location('灰姑娘酒店', {
+                lat: 35.010901,
+                lng: 135.785841
+            }),
         ]
     };
 
@@ -216,6 +274,11 @@ require('knockout');
 
         initApp: function () {
             ko.applyBindings(new ListViewModule());
+            var scroll = new IScroll(document.getElementById('list'), {
+                scrollbars: true,
+                fadeScrollbars: true,
+                mouseWheel: true
+            });
             mapView.initMap();
         },
 
@@ -367,4 +430,4 @@ require('knockout');
 
     o.initApp();
 
-}());
+});

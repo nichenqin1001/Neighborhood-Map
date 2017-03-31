@@ -1,3 +1,8 @@
+.container {
+    position: relative;
+    height: 100%;
+}
+
 #list {
     position: fixed;
     width: 340px;
@@ -5,6 +10,7 @@
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     background-color: rgba(0, 0, 0, 0.1);
     z-index: 1;
+    overflow: hidden;
 }
 
 .list__filter {
@@ -31,10 +37,7 @@
     right: 12px;
 }
 
-.list__locations {
-    width: 100%;
-    overflow: hidden;
-}
+.list__locations {}
 
 .list__locations__location,
 .list__locations__location.active {
