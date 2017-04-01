@@ -9,6 +9,7 @@ $(function () {
         this.address = address;
         this.location = locationObj;
         this.type = type;
+        this.placeID = ko.observable('');
         this.formatted_address = ko.observable('');
         this.active = ko.observable(false);
         this.streetViewImageSrc = ko.observable('');
@@ -168,6 +169,7 @@ $(function () {
             // 点击后先设置所有formatted_address为空值
             // active属性设置为false
             self.locations().forEach(function (location) {
+                location.placeID('');
                 location.formatted_address('');
                 location.active(false);
                 location.streetViewImageSrc('');
@@ -177,21 +179,7 @@ $(function () {
             this.active(true);
             // 隐藏所有标记
             o.hideMarkers(o.getMarkers());
-            // 使用新的标记标识地图
-            var tempMarker = o.getTempMarker();
-            // 为临时标记设置属性
-            tempMarker.setOptions({
-                position: this.location,
-                title: this.address,
-                animation: google.maps.Animation.DROP,
-                map: o.getMap()
-            });
             o.setListDetails(this);
-            // 获取位置所在信息，
-            // 在地图中渲染标记和infowindow
-            // 在infowindow中显示获取到的信息，
-            // 在列表中显示该位置相应信息
-            o.getMarkerDetails(tempMarker, this);
         };
         // 筛选事件
         this.onFilter = function () {
@@ -280,6 +268,11 @@ $(function () {
                 }
             };
             this.streetViewPanorama = new google.maps.StreetViewPanorama(node, this.panoramaOptions);
+        },
+
+        PlaceService: function () {
+            var map = o.getMap();
+            this.placeService = new google.maps.places.PlacesService(map);
         }
 
     };
@@ -397,6 +390,10 @@ $(function () {
             return new mapModule.StreetViewPanorama(node).streetViewPanorama;
         },
 
+        setPlaceService: function () {
+            return new mapModule.PlaceService().placeService;
+        },
+
         /**
          * 显示传入的参数Marker
          * 
@@ -449,7 +446,7 @@ $(function () {
          * 
          * @param {Marker} marker 
          */
-        getMarkerDetails: function (marker, park) {
+        getMarkerDetails: function (marker) {
             var self = this;
             var content, pano;
             this.getGeocoder().geocode({
@@ -468,8 +465,6 @@ $(function () {
                         pano = document.getElementById('pano');
                         self.showStreetView(marker, pano);
                         // 如果传入了park参数，则设置其formatted_address
-                        if (park)
-                            park.formatted_address(results[0].formatted_address);
                         document.getElementById('more').addEventListener('click', function () {
 
                         });
@@ -483,13 +478,65 @@ $(function () {
             });
         },
 
+        placeServiceDetails: function (park) {
+            var self = this;
+            var placeService = o.setPlaceService();
+            var request = {
+                placeId: park.placeID()
+            };
+            placeService.getDetails(request, function (result, status) {
+                if (status === google.maps.places.PlacesServiceStatus.OK) {
+                    if (result) {
+                        console.log(result);
+                        park.formatted_address(result.formatted_address);
+                        var tempMarker = o.getTempMarker();
+                        // 为临时标记设置属性
+                        tempMarker.setOptions({
+                            icon: result.icon,
+                            position: result.geometry.location,
+                            title: result.name,
+                            animation: google.maps.Animation.DROP,
+                            map: o.getMap()
+                        });
+                        // 获取位置所在信息，
+                        // 在地图中渲染标记和infowindow
+                        // 在infowindow中显示获取到的信息，
+                        // 在列表中显示该位置相应信息
+                        self.getMarkerDetails(tempMarker);
+                    } else {
+                        window.alert('No result found!');
+                    }
+                } else {
+                    window.alert('PlaceService failed due to: ' + status);
+                }
+            });
+        },
+
         setListDetails: function (park) {
+            var self = this;
             var position = park.location;
             var url = 'https://maps.googleapis.com/maps/api/streetview?size=48x48&location=' +
                 position.lat + ',' + position.lng +
                 '&fov=90&heading=235&pitch=10' +
                 '&key=' + o.API_KEY;
             park.streetViewImageSrc(url);
+            // TODO: query
+            var geocoder = o.setGeocoder();
+            geocoder.geocode({
+                location: position
+            }, function (results, status) {
+                if (status === google.maps.GeocoderStatus.OK) {
+                    if (results[0]) {
+                        park.placeID(results[0].place_id);
+                        self.placeServiceDetails(park);
+                    } else {
+                        window.alert('No result found');
+                    }
+                } else {
+                    window.alert('Geocoder failed due to: ' + status);
+                }
+            });
+
         }
 
     };
