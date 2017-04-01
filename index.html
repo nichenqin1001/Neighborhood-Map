@@ -27,9 +27,14 @@
     <script type="text/html" id="list__body">
         <ul class="list__locations" data-bind="foreach: locations">
             <li class="list__locations__location" data-bind="click: $parent.onListClick, css: {active: $data.active}">
-                <div class="list__locations__address" data-bind="text: $data.address"></div>
-                <div class="list__locations__formatted_address_container" data-bind="if: $data.active,">
-                    <div class="list__locations__formatted_address" data-bind="text: $data.formatted_address"></div>
+                <div class="list__text">
+                    <div class="list__locations__address" data-bind="text: $data.address"></div>
+                    <div class="list__locations__formatted_address_container" data-bind="if: $data.active,">
+                        <div class="list__locations__formatted_address" data-bind="text: $data.formatted_address"></div>
+                    </div>
+                </div>
+                <div class="list__img" data-bind="if: $data.active">
+                    <img data-bind="attr: { src: $data.streetViewImageSrc}">
                 </div>
             </li>
         </ul>

@@ -73,9 +73,7 @@
 .list__locations__location,
 .list__locations__location.active {
     display: flex;
-    flex-direction: column;
     justify-content: center;
-    align-items: center;
     padding: 10px;
     background-color: #fafafa;
     width: 100%;
@@ -85,6 +83,11 @@
     cursor: pointer;
     border-bottom: 1px solid rgba(0, 0, 0, 0.1);
     transition: all .2s;
+}
+
+.list__text {
+    flex: 1;
+    max-width: calc(100% - 48px);
 }
 
 .list__locations__location.active {
@@ -112,6 +115,10 @@
     overflow: hidden;
     text-overflow: ellipsis;
     padding: 5px 0;
+}
+
+.list__img {
+    flex: 0 0 48px;
 }
 
 .info {

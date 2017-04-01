@@ -11,6 +11,7 @@ $(function () {
         this.type = type;
         this.formatted_address = ko.observable('');
         this.active = ko.observable(false);
+        this.streetViewImageSrc = ko.observable('');
     };
 
     var data = {
@@ -169,6 +170,7 @@ $(function () {
             self.locations().forEach(function (location) {
                 location.formatted_address('');
                 location.active(false);
+                location.streetViewImageSrc('');
             });
             // 设置active为ture
             // 添加active类
@@ -184,6 +186,7 @@ $(function () {
                 animation: google.maps.Animation.DROP,
                 map: o.getMap()
             });
+            o.setListDetails(this);
             // 获取位置所在信息，
             // 在地图中渲染标记和infowindow
             // 在infowindow中显示获取到的信息，
@@ -322,6 +325,18 @@ $(function () {
         initApp: function () {
             ko.applyBindings(new ListViewModule());
             mapView.initMap();
+        },
+
+        http: function (url) {
+            $.ajax({
+                type: "GET",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                url: url,
+                success: function (response) {
+
+                }
+            });
         },
 
         API_KEY: data.API_KEY,
@@ -467,6 +482,15 @@ $(function () {
                 }
             });
         },
+
+        setListDetails: function (park) {
+            var position = park.location;
+            var url = 'https://maps.googleapis.com/maps/api/streetview?size=48x48&location=' +
+                position.lat + ',' + position.lng +
+                '&fov=90&heading=235&pitch=10' +
+                '&key=' + o.API_KEY;
+            park.streetViewImageSrc(url);
+        }
 
     };
 
