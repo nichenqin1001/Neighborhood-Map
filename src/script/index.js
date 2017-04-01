@@ -5,6 +5,8 @@ require('iscroll');
 // namespace
 $(function () {
 
+    'use strict';
+
     var Location = function (address, locationObj, type) {
         this.address = address;
         this.location = locationObj;
