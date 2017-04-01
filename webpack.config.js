@@ -7,7 +7,7 @@ module.exports = {
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'js/[name].bundle.js',
-        publicPath: 'http://localhost:8080'
+        publicPath: '/'
     },
     module: {
         loaders: [{
@@ -17,7 +17,10 @@ module.exports = {
     },
     plugins: [
         new Webpack.ProvidePlugin({
-            ko: 'knockout'
+            $: 'jquery',
+            jQuery: 'jquery',
+            ko: 'knockout',
+            IScroll: 'iscroll'
         }),
         new HtmlWebpackPlugin({
             template: 'index.html'
