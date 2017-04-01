@@ -81,6 +81,70 @@ $(function () {
                 lat: 35.004578,
                 lng: 135.76753
             }, '餐厅'),
+            new Location('京都格蘭比亞大酒店', {
+                lat: 34.9859964,
+                lng: 135.7597823
+            }, '酒店'),
+            new Location('近鐵京都車站酒店', {
+                lat: 34.9848259,
+                lng: 135.756949
+            }, '酒店'),
+            new Location('京都八條口大和皇家酒店', {
+                lat: 34.981614,
+                lng: 135.760011
+            }, '酒店'),
+            new Location('京都甘樂酒店', {
+                lat: 34.993566,
+                lng: 135.759435
+            }, '酒店'),
+            new Location('京都銀門酒店', {
+                lat: 35.010481,
+                lng: 135.762213
+            }, '酒店'),
+            new Location('京都法华俱乐部酒店', {
+                lat: 34.9873951,
+                lng: 135.7588398
+            }, '酒店'),
+            new Location('京都四條百夫長膠囊溫泉酒店', {
+                lat: 35.0034593,
+                lng: 135.7616023
+            }, '酒店'),
+            new Location('京阪京都格蘭德飯店', {
+                lat: 34.9836324,
+                lng: 135.7608894
+            }, '酒店'),
+            new Location('日本寧酒店', {
+                lat: 34.99219,
+                lng: 135.755778
+            }, '酒店'),
+            new Location('京都格兰德酒店', {
+                lat: 34.985864,
+                lng: 135.758957
+            }, '酒店'),
+            new Location('京都麗思卡爾頓酒店', {
+                lat: 35.013768,
+                lng: 135.770837
+            }, '酒店'),
+            new Location('京都新阪急酒店', {
+                lat: 34.987463,
+                lng: 135.757591
+            }, '酒店'),
+            new Location('灰姑娘酒店', {
+                lat: 35.010901,
+                lng: 135.785841
+            }, '酒店'),
+            new Location('老香港酒家京都', {
+                lat: 35.0032389,
+                lng: 135.7591703
+            }, '餐厅'),
+            new Location('菊乃井 露庵', {
+                lat: 35.0034513,
+                lng: 135.7706684
+            }, '餐厅'),
+            new Location('らーめん千の風京都', {
+                lat: 35.004578,
+                lng: 135.76753
+            }, '餐厅'),
         ]
     };
 
@@ -90,6 +154,14 @@ $(function () {
         this.locations = ko.observableArray(o.getParkList());
         // 筛选列表数据
         this.inputText = ko.observable('');
+        // 使用iscroll插件代替滚动条
+        this.setIScrollPlugin = function (elements) {
+            var scroll = new IScroll(elements[0].parentElement, {
+                scrollbars: true,
+                fadeScrollbars: true,
+                mouseWheel: true
+            });
+        };
         // 点击列表项目事件
         this.onListClick = function () {
             // 点击后先设置所有formatted_address为空值
@@ -173,9 +245,6 @@ $(function () {
                 marker = new google.maps.Marker(self.markerOption);
                 marker.setPosition(data.location);
                 marker.setTitle(data.address);
-                marker.addListener('click', function () {
-                    o.getMarkerDetails(this);
-                });
                 self.markers.push(marker);
             });
         },
@@ -221,8 +290,15 @@ $(function () {
             this.parkMap = o.setMap(document.getElementById('map'));
             // 初始化parkMarkers
             this.parkMarkers = o.setMarkers(parkList);
+            // parkMarkers点击事件
+            this.parkMarkers.forEach(function (parkMarker) {
+                parkMarker.addListener('click', function () {
+                    o.getMarkerDetails(this);
+                });
+            });
             // 初始化infoWindow
             this.parkInfoWindow = o.setInfoWindow();
+            // infoWindow点击事件
             this.parkInfoWindow.addListener('closeclick', function () {
                 this.marker = null;
             });
@@ -245,11 +321,6 @@ $(function () {
 
         initApp: function () {
             ko.applyBindings(new ListViewModule());
-            var scroll = new IScroll(document.getElementById('list'), {
-                scrollbars: true,
-                fadeScrollbars: true,
-                mouseWheel: true
-            });
             mapView.initMap();
         },
 
@@ -346,7 +417,7 @@ $(function () {
             this.getMap().setStreetView(panorama);
         },
 
-        setContent: function (marker, data) {
+        setInfoWindowContent: function (marker, data) {
             return marker.title +
                 '<div id="formatted_address" class="infowindow__text">' +
                 '地址：' +
@@ -373,7 +444,7 @@ $(function () {
                 if (status === google.maps.GeocoderStatus.OK) {
                     if (results[0]) {
                         // 根据返回的数据生成显示在infowindow中的content
-                        content = self.setContent(marker, results[0]);
+                        content = self.setInfoWindowContent(marker, results[0]);
                         // 显示infowindow
                         self.showParkInfoWindow(marker, content);
                         // 移动地图中心

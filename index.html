@@ -18,20 +18,22 @@
                     <input class="form__filter_button" type="button" value="筛选" data-bind="click: onFilter">
                 </div>
             </div>
-            <div id="list">
-                <ul class="list__locations" data-bind="foreach: locations">
-                    <li class="list__locations__location" data-bind="click: $parent.onListClick, css: {active: $data.active}">
-                        <div class="list__locations__address" data-bind="text: $data.address"></div>
-                        <div class="list__locations__formatted_address_container" data-bind="if: $data.active,">
-                            <div class="list__locations__formatted_address" data-bind="text: $data.formatted_address"></div>
-                        </div>
-                    </li>
-                </ul>
-            </div>
+            <div id="list" data-bind="template: { name: 'list__body', afterRender: setIScrollPlugin }"></div>
             <div class="info">No Thing More</div>
         </div>
         <div id="map" class="map"></div>
     </div>
+
+    <script type="text/html" id="list__body">
+        <ul class="list__locations" data-bind="foreach: locations">
+            <li class="list__locations__location" data-bind="click: $parent.onListClick, css: {active: $data.active}">
+                <div class="list__locations__address" data-bind="text: $data.address"></div>
+                <div class="list__locations__formatted_address_container" data-bind="if: $data.active,">
+                    <div class="list__locations__formatted_address" data-bind="text: $data.formatted_address"></div>
+                </div>
+            </li>
+        </ul>
+    </script>
 
     <script src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBCTcVF27rnK-9_vovt47HzeUIQtUAYZCU"></script>
 </body>
