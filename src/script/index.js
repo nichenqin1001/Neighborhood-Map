@@ -7,8 +7,8 @@ $(function () {
 
     'use strict';
 
-    var Location = function (address, locationObj, type) {
-        this.address = address;
+    var Location = function (name, locationObj, type) {
+        this.name = name;
         this.location = locationObj;
         this.type = type;
         this.placeID = ko.observable('');
@@ -237,7 +237,7 @@ $(function () {
             dataList.forEach(function (data) {
                 marker = new google.maps.Marker(self.markerOption);
                 marker.setPosition(data.location);
-                marker.setTitle(data.address);
+                marker.setTitle(data.name);
                 self.markers.push(marker);
             });
         },
@@ -325,11 +325,10 @@ $(function () {
         http: function (url) {
             $.ajax({
                 type: "GET",
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
+                dataType: "jsonp",
                 url: url,
                 success: function (response) {
-
+                    console.log(response);
                 }
             });
         },
@@ -462,7 +461,7 @@ $(function () {
                         // 显示infowindow
                         self.showParkInfoWindow(marker, content);
                         // 移动地图中心
-                        self.getMap().panTo(marker.position);
+                        self.getMap().setCenter(marker.position);
                         // 显示streetview
                         pano = document.getElementById('pano');
                         self.showStreetView(marker, pano);
@@ -542,6 +541,8 @@ $(function () {
         }
 
     };
+
+    var a = o.http('https://api.yelp.com/v3/autocomplete?text=t&latitude=12.123&longitude=23.3&locale=ja_JP');
 
     o.initApp();
 
