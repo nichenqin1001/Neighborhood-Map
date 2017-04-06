@@ -1,13 +1,13 @@
 var path = require('path');
 var Webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+var CleanWebpackPlugin = require('clean-webpack-plugin');
 
 module.exports = {
     entry: './src/app.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
-        filename: 'js/[name].bundle.js',
-        publicPath: '/'
+        filename: 'js/[name].bundle.js'
     },
     module: {
         loaders: [{
@@ -25,5 +25,6 @@ module.exports = {
         new HtmlWebpackPlugin({
             template: 'index.html'
         }),
+        new CleanWebpackPlugin(['dist'])
     ]
 };

@@ -7,6 +7,27 @@ $(function () {
 
     'use strict';
 
+    var utils = (function () {
+        var u = {};
+
+        u.yelpHttp = function (location) {
+            $.ajax({
+                    type: "GET",
+                    dataType: 'jsonp',
+                    url: 'https://api.yelp.com/v3/businesses/search?term=delis&latitude=37.786882&longitude=-122.399972',
+                    caches: true
+                })
+                .done(function (data) {
+                    console.log(data);
+                })
+                .fail(function (e) {
+                    console.log(e);
+                });
+        };
+
+        return u;
+    }());
+
     var Location = function (name, locationObj, type) {
         this.name = name;
         this.location = locationObj;
@@ -61,17 +82,9 @@ $(function () {
                 lat: 34.985864,
                 lng: 135.758957
             }, '酒店'),
-            new Location('京都麗思卡爾頓酒店', {
-                lat: 35.013768,
-                lng: 135.770837
-            }, '酒店'),
             new Location('京都新阪急酒店', {
                 lat: 34.987463,
                 lng: 135.757591
-            }, '酒店'),
-            new Location('灰姑娘酒店', {
-                lat: 35.010901,
-                lng: 135.785841
             }, '酒店'),
             new Location('老香港酒家京都', {
                 lat: 35.0032389,
@@ -84,71 +97,7 @@ $(function () {
             new Location('らーめん千の風京都', {
                 lat: 35.004578,
                 lng: 135.76753
-            }, '餐厅'),
-            new Location('京都格蘭比亞大酒店', {
-                lat: 34.9859964,
-                lng: 135.7597823
-            }, '酒店'),
-            new Location('近鐵京都車站酒店', {
-                lat: 34.9848259,
-                lng: 135.756949
-            }, '酒店'),
-            new Location('京都八條口大和皇家酒店', {
-                lat: 34.981614,
-                lng: 135.760011
-            }, '酒店'),
-            new Location('京都甘樂酒店', {
-                lat: 34.993566,
-                lng: 135.759435
-            }, '酒店'),
-            new Location('京都銀門酒店', {
-                lat: 35.010481,
-                lng: 135.762213
-            }, '酒店'),
-            new Location('京都法华俱乐部酒店', {
-                lat: 34.9873951,
-                lng: 135.7588398
-            }, '酒店'),
-            new Location('京都四條百夫長膠囊溫泉酒店', {
-                lat: 35.0034593,
-                lng: 135.7616023
-            }, '酒店'),
-            new Location('京阪京都格蘭德飯店', {
-                lat: 34.9836324,
-                lng: 135.7608894
-            }, '酒店'),
-            new Location('日本寧酒店', {
-                lat: 34.99219,
-                lng: 135.755778
-            }, '酒店'),
-            new Location('京都格兰德酒店', {
-                lat: 34.985864,
-                lng: 135.758957
-            }, '酒店'),
-            new Location('京都麗思卡爾頓酒店', {
-                lat: 35.013768,
-                lng: 135.770837
-            }, '酒店'),
-            new Location('京都新阪急酒店', {
-                lat: 34.987463,
-                lng: 135.757591
-            }, '酒店'),
-            new Location('灰姑娘酒店', {
-                lat: 35.010901,
-                lng: 135.785841
-            }, '酒店'),
-            new Location('老香港酒家京都', {
-                lat: 35.0032389,
-                lng: 135.7591703
-            }, '餐厅'),
-            new Location('菊乃井 露庵', {
-                lat: 35.0034513,
-                lng: 135.7706684
-            }, '餐厅'),
-            new Location('らーめん千の風京都', {
-                lat: 35.004578,
-                lng: 135.76753
-            }, '餐厅'),
+            }, '餐厅')
         ]
     };
 
@@ -187,11 +136,26 @@ $(function () {
             o.hideMarkers(o.getMarkers());
             o.setListDetails(this);
         };
-        // 筛选事件
-        this.onFilter = function () {
+        this.resetData = function () {
             this.locations.removeAll();
             var dataCopy = o.getParkList().slice();
             this.locations(dataCopy);
+        };
+        this.resetMapView = function () {
+            o.hideMarkers(o.getMarkers());
+            o.hideMarkers(o.getTempMarker());
+            mapView.parkMarkers = o.setMarkers(this.locations());
+            // 根据新的locations数组重新设置标记
+            o.showMarkers(o.getMarkers());
+            o.getMarkers().forEach(function (marker) {
+                marker.addListener('click', function () {
+                    o.getMarkerDetails(this);
+                });
+            });
+        };
+        // 筛选事件
+        this.onFilter = function () {
+            this.resetData();
             var inputText = this.inputText();
             if (!inputText) return;
             // 如果location的type值于输入不同，则删除该记录
@@ -200,24 +164,15 @@ $(function () {
             });
             if (mq.matches) self.listHide(true);
             // 隐藏所有标记
-            o.hideMarkers(o.getMarkers());
-            o.hideMarkers(o.getTempMarker());
-            mapView.parkMarkers = o.setMarkers(this.locations());
-            // 根据新的locations数组重新设置标记
-            o.showMarkers(o.getMarkers());
+            this.resetMapView();
 
         };
         // 重置
         this.reSet = function () {
-            this.locations.removeAll();
-            var dataCopy = o.getParkList().slice();
-            // 移动设备上隐藏列表
+            this.resetData();
             if (mq.matches) self.listHide(true);
             // 重新渲染列表为数据的复制
-            this.locations(dataCopy);
-            o.hideMarkers(o.getMarkers());
-            o.hideMarkers(o.getTempMarker());
-            o.showMarkers(o.setMarkers(dataCopy));
+            this.resetMapView();
         };
         // 切换list
         this.toggleList = function () {
@@ -306,7 +261,6 @@ $(function () {
 
         initMap: function () {
             var self = this;
-            var parkList = o.getParkList();
             // 初始化并显示parkMap
             this.parkMap = o.setMap(document.getElementById('map'));
             // 初始化parkMarkers
@@ -343,17 +297,6 @@ $(function () {
         initApp: function () {
             ko.applyBindings(new ListViewModule());
             mapView.initMap();
-        },
-
-        http: function (url) {
-            $.ajax({
-                type: "GET",
-                dataType: "jsonp",
-                url: url,
-                success: function (response) {
-                    console.log(response);
-                }
-            });
         },
 
         API_KEY: data.API_KEY,
@@ -483,6 +426,7 @@ $(function () {
             }, function (results, status) {
                 if (status === google.maps.GeocoderStatus.OK) {
                     if (results[0]) {
+                        console.log(results[0]);
                         // 根据返回的数据生成显示在infowindow中的content
                         content = self.setInfoWindowContent(marker, results[0]);
                         // 显示infowindow
@@ -494,7 +438,7 @@ $(function () {
                         self.showStreetView(marker, pano);
                         // 如果传入了park参数，则设置其formatted_address
                         document.getElementById('more').addEventListener('click', function () {
-
+                            utils.yelpHttp(results[0].geometry);
                         });
                     } else {
                         content = 'No results found';
