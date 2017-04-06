@@ -1,9 +1,0 @@
-@media screen and (max-witdh: 480px) {
-    #nav,
-    #map {
-        left: 0;
-    }
-    #list__container {
-        width: 200px;
-    }
-}

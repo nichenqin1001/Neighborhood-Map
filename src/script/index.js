@@ -154,11 +154,13 @@ $(function () {
 
     var ListViewModule = function () {
         var self = this;
+        var smallScreenSize = 500;
         // 渲染列表数据
         this.locations = ko.observableArray(o.getParkList());
         // 筛选列表数据
         this.inputText = ko.observable('');
-        this.listHide = ko.observable(false);
+        // 响应式侧边栏
+        this.listHide = ko.observable(window.matchMedia('(max-width: ' + smallScreenSize + 'px)').matches);
         // 使用iscroll插件代替滚动条
         this.setIScrollPlugin = function (elements) {
             var scroll = new IScroll(elements[0].parentElement, {
@@ -178,13 +180,13 @@ $(function () {
             // 设置active为ture
             // 添加active类
             this.active(true);
+            self.listHide(true);
             // 隐藏所有标记
             o.hideMarkers(o.getMarkers());
             o.setListDetails(this);
         };
         // 筛选事件
         this.onFilter = function () {
-            console.log(data.parkList);
             var inputText = this.inputText();
             if (inputText === '') return;
             // 如果location的type值于输入不同，则删除该记录
@@ -209,6 +211,12 @@ $(function () {
         this.toggleList = function () {
             this.listHide(!this.listHide());
         };
+        // 窗口变换大小重新计算
+        this.onWindowResize = (function () {
+            window.addEventListener('resize', function () {
+                self.listHide(window.matchMedia('(max-width: ' + smallScreenSize + 'px)').matches);
+            });
+        }());
     };
 
     var mapModule = {
