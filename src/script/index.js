@@ -15,7 +15,10 @@ $(function () {
                     type: "GET",
                     dataType: 'jsonp',
                     url: 'https://api.yelp.com/v3/businesses/search?term=delis&latitude=37.786882&longitude=-122.399972',
-                    caches: true
+                    caches: true,
+                    beforeSend: function (xhr, settings) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + 'X9cUMiP6GQqkJPrSBHeBpqBt50FpakSneqO4JrqRxlhq3uh0_5Msca06DC6tITOHAuizl_lf8tANJpFZAfylFjJJ7q8NJ-stISsdvqwGgHMMolvaqGl3dDeZ8NXlWHYx');
+                    },
                 })
                 .done(function (data) {
                     console.log(data);
@@ -24,7 +27,6 @@ $(function () {
                     console.log(e);
                 });
         };
-
         return u;
     }());
 
@@ -437,9 +439,7 @@ $(function () {
                         pano = document.getElementById('pano');
                         self.showStreetView(marker, pano);
                         // 如果传入了park参数，则设置其formatted_address
-                        document.getElementById('more').addEventListener('click', function () {
-                            utils.yelpHttp(results[0].geometry);
-                        });
+                        document.getElementById('more').addEventListener('click', function () {});
                     } else {
                         content = 'No results found';
                         self.showParkInfoWindow(marker, content);
@@ -512,6 +512,8 @@ $(function () {
         }
 
     };
+
+    var a = utils.yelpHttp('1');
 
     o.initApp();
 
