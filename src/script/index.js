@@ -158,11 +158,10 @@ $(function () {
         this.locations = ko.observableArray(o.getParkList());
         // 筛选列表数据
         this.inputText = ko.observable('');
+        this.listHide = ko.observable(false);
         // 使用iscroll插件代替滚动条
         this.setIScrollPlugin = function (elements) {
             var scroll = new IScroll(elements[0].parentElement, {
-                scrollbars: true,
-                fadeScrollbars: true,
                 mouseWheel: true
             });
         };
@@ -205,6 +204,10 @@ $(function () {
             console.log(data.parkList);
             var a = data.parkList;
             this.locations(a);
+        };
+        // 切换list
+        this.toggleList = function () {
+            this.listHide(!this.listHide());
         };
     };
 
@@ -541,8 +544,6 @@ $(function () {
         }
 
     };
-
-    var a = o.http('https://api.yelp.com/v3/autocomplete?text=t&latitude=12.123&longitude=23.3&locale=ja_JP');
 
     o.initApp();
 

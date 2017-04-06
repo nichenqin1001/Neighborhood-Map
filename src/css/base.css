@@ -5,11 +5,15 @@
 
 #list__container {
     position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
     width: 340px;
-    height: 100%;
-    background-color: rgb(66, 133, 244);
+    background-color: #3390df;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     z-index: 1;
+    transition: all .5s;
+    overflow: hidden;
 }
 
 #form {
@@ -38,6 +42,11 @@
     height: 100%;
 }
 
+.list_hide {
+    opacity: 0;
+    transform: translateX(-100px);
+}
+
 #list {
     position: absolute;
     top: 60px;
@@ -50,7 +59,7 @@
 
 .list__filter {
     position: relative;
-    background-color: rgb(66, 133, 244);
+    background-color: #3390df;
     width: 100%;
     margin-bottom: 5px;
 }
@@ -72,7 +81,9 @@
     right: 12px;
 }
 
-.list__locations {}
+.list__locations {
+    overflow: hidden;
+}
 
 .list__locations__location,
 .list__locations__location.active {
@@ -97,7 +108,7 @@
 
 .list__locations__location.active {
     color: #fff;
-    background-color: rgb(66, 133, 244);
+    background-color: #3390df;
     height: 70px;
     border-top: 1px solid #fff;
     border-bottom: 1px solid #fff;
@@ -134,13 +145,36 @@
     text-align: center;
 }
 
-#map {
+.full_page {
+    transform: translateX(-340px);
+    z-index: 100;
+}
+
+#nav {
     position: absolute;
     top: 0;
     right: 0;
+    left: 340px;
+    width: 100%;
+    height: 40px;
+    padding: 5px;
+    background-color: #3390df;
+    transition: .2s all;
+}
+
+.nav__toggle {
+    width: 30px;
+    height: 100%;
+}
+
+#map {
+    position: absolute;
+    top: 40px;
+    right: 0;
     bottom: 0;
     left: 340px;
-    height: 100%;
+    width: 100%;
+    transition: .2s all;
 }
 
 .infowindow__text {
