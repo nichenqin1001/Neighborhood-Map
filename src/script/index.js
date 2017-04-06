@@ -149,11 +149,6 @@ $(function () {
             mapView.parkMarkers = o.setMarkers(this.locations());
             // 根据新的locations数组重新设置标记
             o.showMarkers(o.getMarkers());
-            o.getMarkers().forEach(function (marker) {
-                marker.addListener('click', function () {
-                    o.getMarkerDetails(this);
-                });
-            });
         };
         // 筛选事件
         this.onFilter = function () {
@@ -200,6 +195,9 @@ $(function () {
 
         Marker: function () {
             this.marker = new google.maps.Marker();
+            this.marker.addListener('click', function () {
+                o.getMarkerDetails(this);
+            });
         },
 
         /**
@@ -218,6 +216,9 @@ $(function () {
                 marker = new google.maps.Marker(self.markerOption);
                 marker.setPosition(data.location);
                 marker.setTitle(data.name);
+                marker.addListener('click', function () {
+                    o.getMarkerDetails(this);
+                });
                 self.markers.push(marker);
             });
         },
@@ -265,30 +266,20 @@ $(function () {
             var self = this;
             // 初始化并显示parkMap
             this.parkMap = o.setMap(document.getElementById('map'));
-            // 初始化parkMarkers
-            this.parkMarkers = o.setMarkers(o.getParkList().slice());
-            // parkMarkers点击事件
-            this.parkMarkers.forEach(function (parkMarker) {
-                parkMarker.addListener('click', function () {
-                    o.getMarkerDetails(this);
-                });
-            });
             // 初始化infoWindow
             this.parkInfoWindow = o.setInfoWindow();
             // infoWindow点击事件
             this.parkInfoWindow.addListener('closeclick', function () {
                 this.marker = null;
             });
+            // 初始化parkMarkers
+            this.parkMarkers = o.setMarkers(o.getParkList().slice());
             // 初始化geocoder
             this.parkGeocoder = o.setGeocoder();
             // 在parkMap上显示parkMarkers
             o.showMarkers(this.parkMarkers);
             // 初始化一个临时marker
             this.tempMarker = o.setTempMarker();
-            // 为每个tempMarker添加点击事件
-            this.tempMarker.addListener('click', function () {
-                o.getMarkerDetails(this);
-            });
             this.streetViewService = o.setStreetViewService();
         },
 
@@ -513,7 +504,7 @@ $(function () {
 
     };
 
-    var a = utils.yelpHttp('1');
+    utils.yelpHttp();
 
     o.initApp();
 
