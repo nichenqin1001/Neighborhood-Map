@@ -28,6 +28,13 @@ form {
     padding: 0;
 }
 
-input[text] {
+input {
     border: 0;
+    outline: none;
+}
+
+input[type=button] {
+    background: #3390df;
+    color: #fff;
+    padding: 5px;
 }

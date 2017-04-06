@@ -155,12 +155,13 @@ $(function () {
     var ListViewModule = function () {
         var self = this;
         var smallScreenSize = 500;
-        // 渲染列表数据
-        this.locations = ko.observableArray(o.getParkList());
+        var mq = window.matchMedia('(max-width: ' + smallScreenSize + 'px)');
+        // 渲染列表数据，使用数组的复制防止remove方法修改原始数据
+        this.locations = ko.observableArray(o.getParkList().slice());
         // 筛选列表数据
         this.inputText = ko.observable('');
         // 响应式侧边栏
-        this.listHide = ko.observable(window.matchMedia('(max-width: ' + smallScreenSize + 'px)').matches);
+        this.listHide = ko.observable(mq.matches);
         // 使用iscroll插件代替滚动条
         this.setIScrollPlugin = function (elements) {
             var scroll = new IScroll(elements[0].parentElement, {
@@ -180,22 +181,27 @@ $(function () {
             // 设置active为ture
             // 添加active类
             this.active(true);
-            self.listHide(true);
+            // 小尺寸屏幕中隐藏侧边栏
+            if (mq.matches) self.listHide(true);
             // 隐藏所有标记
             o.hideMarkers(o.getMarkers());
             o.setListDetails(this);
         };
         // 筛选事件
         this.onFilter = function () {
+            this.locations.removeAll();
+            var dataCopy = o.getParkList().slice();
+            this.locations(dataCopy);
             var inputText = this.inputText();
-            if (inputText === '') return;
+            if (!inputText) return;
             // 如果location的type值于输入不同，则删除该记录
             this.locations.remove(function (location) {
                 return location.type !== inputText;
             });
-            console.log(data.parkList); // 改变了data.parkList
+            if (mq.matches) self.listHide(true);
             // 隐藏所有标记
             o.hideMarkers(o.getMarkers());
+            o.hideMarkers(o.getTempMarker());
             mapView.parkMarkers = o.setMarkers(this.locations());
             // 根据新的locations数组重新设置标记
             o.showMarkers(o.getMarkers());
@@ -203,9 +209,15 @@ $(function () {
         };
         // 重置
         this.reSet = function () {
-            console.log(data.parkList);
-            var a = data.parkList;
-            this.locations(a);
+            this.locations.removeAll();
+            var dataCopy = o.getParkList().slice();
+            // 移动设备上隐藏列表
+            if (mq.matches) self.listHide(true);
+            // 重新渲染列表为数据的复制
+            this.locations(dataCopy);
+            o.hideMarkers(o.getMarkers());
+            o.hideMarkers(o.getTempMarker());
+            o.showMarkers(o.setMarkers(dataCopy));
         };
         // 切换list
         this.toggleList = function () {
@@ -214,7 +226,7 @@ $(function () {
         // 窗口变换大小重新计算
         this.onWindowResize = (function () {
             window.addEventListener('resize', function () {
-                self.listHide(window.matchMedia('(max-width: ' + smallScreenSize + 'px)').matches);
+                self.listHide(mq.matches);
             });
         }());
     };
@@ -298,7 +310,7 @@ $(function () {
             // 初始化并显示parkMap
             this.parkMap = o.setMap(document.getElementById('map'));
             // 初始化parkMarkers
-            this.parkMarkers = o.setMarkers(parkList);
+            this.parkMarkers = o.setMarkers(o.getParkList().slice());
             // parkMarkers点击事件
             this.parkMarkers.forEach(function (parkMarker) {
                 parkMarker.addListener('click', function () {
@@ -418,10 +430,14 @@ $(function () {
             });
         },
 
-        hideMarkers: function (markers) {
-            markers.forEach(function (marker) {
-                marker.setMap(null);
-            });
+        hideMarkers: function (m) {
+            if (m instanceof Array) {
+                m.forEach(function (marker) {
+                    marker.setMap(null);
+                });
+            } else {
+                m.setMap(null);
+            }
         },
 
         /**
