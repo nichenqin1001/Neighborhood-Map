@@ -387,7 +387,7 @@ $(function () {
                 '</div>' +
                 '<div id="pano">' +
                 '</div>' +
-                '<input id="more" type="button" value="Flickr图片">';
+                '<input id="more" type="button" value="Flickr图片"><span id="flickrInfo"></span>';
         },
 
         /**
@@ -416,8 +416,7 @@ $(function () {
                         pano = document.getElementById('pano');
                         self.showStreetView(marker, pano);
                         document.getElementById('more').addEventListener('click', function () {
-                            console.log(marker.title);
-                            o.http(marker.title);
+                            o.http(marker.position);
                         });
                     } else {
                         content = 'No results found';
@@ -490,14 +489,16 @@ $(function () {
 
         },
 
-        http: function (text) {
+        http: function (location) {
+            console.log(location);
             var options = {
                 "api_key": "6e4f689c112876a5aa5164dceee734af",
-                "method": "flickr.photos.search", // You can replace this with whatever method,
-                // flickr.photos.search fits your use case best, though.
+                "method": "flickr.photos.search",
                 "format": "json",
                 "nojsoncallback": "1",
-                "text": text // This is where you'll put your "file name"
+                "lat": location.lat(),
+                "lon": location.lng(),
+                "radius": 1,
             };
 
             var makeFlickrRequest = function (options, cb) {
@@ -518,7 +519,9 @@ $(function () {
             };
 
             makeFlickrRequest(options, function (data) {
+                console.log(data);
                 var image = document.getElementById('image');
+                var info = document.getElementById('flickrInfo');
                 if (data.photos.photo[0]) {
                     var photo = data.photos.photo[0];
                     var url = 'http://c1.staticflickr.com/' +
@@ -530,7 +533,7 @@ $(function () {
                     image.setAttribute('src', url);
                 } else {
                     image.style.display = 'none';
-                    window.alert('No photo found');
+                    info.innerHTML = 'No photo found on Flickr!';
                 }
 
             });
