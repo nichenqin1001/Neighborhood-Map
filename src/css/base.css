@@ -53,7 +53,7 @@
     bottom: 60px;
     left: 0;
     padding: 0 10px;
-    width: 340px;
+    width: 100%;
     overflow: hidden;
 }
 
@@ -188,4 +188,27 @@
 
 #more {
     display: block;
+}
+
+#image {
+    position: fixed;
+    display: none;
+    right: 20px;
+    bottom: 20px;
+    height: 200px;
+    width: 200px;
+    z-index: 100;
+}
+
+@media screen and (max-width: 400px) {
+    #list__container {
+        width: 260px;
+    }
+    #nav,
+    #map {
+        left: 260px;
+    }
+    .full_page {
+        transform: translateX(-260px);
+    }
 }

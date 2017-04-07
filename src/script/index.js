@@ -7,29 +7,6 @@ $(function () {
 
     'use strict';
 
-    var utils = (function () {
-        var u = {};
-
-        u.yelpHttp = function (location) {
-            $.ajax({
-                    type: "GET",
-                    dataType: 'jsonp',
-                    url: 'https://api.yelp.com/v3/businesses/search?term=delis&latitude=37.786882&longitude=-122.399972',
-                    caches: true,
-                    beforeSend: function (xhr, settings) {
-                        xhr.setRequestHeader('Authorization', 'Bearer ' + 'X9cUMiP6GQqkJPrSBHeBpqBt50FpakSneqO4JrqRxlhq3uh0_5Msca06DC6tITOHAuizl_lf8tANJpFZAfylFjJJ7q8NJ-stISsdvqwGgHMMolvaqGl3dDeZ8NXlWHYx');
-                    },
-                })
-                .done(function (data) {
-                    console.log(data);
-                })
-                .fail(function (e) {
-                    console.log(e);
-                });
-        };
-        return u;
-    }());
-
     var Location = function (name, locationObj, type) {
         this.name = name;
         this.location = locationObj;
@@ -107,6 +84,7 @@ $(function () {
         var self = this;
         var smallScreenSize = 500;
         var mq = window.matchMedia('(max-width: ' + smallScreenSize + 'px)');
+
         // 渲染列表数据，使用数组的复制防止remove方法修改原始数据
         this.locations = ko.observableArray(o.getParkList().slice());
         // 筛选列表数据
@@ -173,7 +151,11 @@ $(function () {
         };
         // 切换list
         this.toggleList = function () {
+            // 重新绘制地图
+            google.maps.event.trigger(o.getMap(), 'resize');
+            // 切换列表显示隐藏
             this.listHide(!this.listHide());
+
         };
         // 窗口变换大小重新计算
         this.onWindowResize = (function () {
@@ -181,6 +163,10 @@ $(function () {
                 self.listHide(mq.matches);
             });
         }());
+        this.test = function () {
+            var a =
+                console.log('1');
+        };
     };
 
     var mapModule = {
@@ -401,7 +387,7 @@ $(function () {
                 '</div>' +
                 '<div id="pano">' +
                 '</div>' +
-                '<input id="more" type="button" value="查看更多信息">';
+                '<input id="more" type="button" value="Flickr图片">';
         },
 
         /**
@@ -429,8 +415,10 @@ $(function () {
                         // 显示streetview
                         pano = document.getElementById('pano');
                         self.showStreetView(marker, pano);
-                        // 如果传入了park参数，则设置其formatted_address
-                        document.getElementById('more').addEventListener('click', function () {});
+                        document.getElementById('more').addEventListener('click', function () {
+                            console.log(marker.title);
+                            o.http(marker.title);
+                        });
                     } else {
                         content = 'No results found';
                         self.showParkInfoWindow(marker, content);
@@ -500,11 +488,54 @@ $(function () {
                 }
             });
 
+        },
+
+        http: function (text) {
+            var options = {
+                "api_key": "6e4f689c112876a5aa5164dceee734af",
+                "method": "flickr.photos.search", // You can replace this with whatever method,
+                // flickr.photos.search fits your use case best, though.
+                "format": "json",
+                "nojsoncallback": "1",
+                "text": text // This is where you'll put your "file name"
+            };
+
+            var makeFlickrRequest = function (options, cb) {
+                var url, item, first;
+
+                url = "https://api.flickr.com/services/rest/";
+                first = true;
+                $.each(options, function (key, value) {
+                    url += (first ? "?" : "&") + key + "=" + value;
+                    first = false;
+                });
+
+                $.get(url, cb)
+                    .fail(function () {
+                        window.alert('ajax fail');
+                    });
+
+            };
+
+            makeFlickrRequest(options, function (data) {
+                var image = document.getElementById('image');
+                if (data.photos.photo[0]) {
+                    var photo = data.photos.photo[0];
+                    var url = 'http://c1.staticflickr.com/' +
+                        photo.farm + '/' +
+                        photo.server + '/' +
+                        photo.id + '_' + photo.secret +
+                        '.jpg';
+                    image.style.display = 'block';
+                    image.setAttribute('src', url);
+                } else {
+                    image.style.display = 'none';
+                    window.alert('No photo found');
+                }
+
+            });
         }
-
     };
-
-    utils.yelpHttp();
 
     o.initApp();
 
