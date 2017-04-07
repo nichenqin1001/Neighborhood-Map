@@ -3,7 +3,7 @@ require('jquery');
 require('iscroll');
 
 // namespace
-$(function () {
+(function () {
 
     'use strict';
 
@@ -20,7 +20,7 @@ $(function () {
     var data = {
         API_KEY: 'AIzaSyBCTcVF27rnK-9_vovt47HzeUIQtUAYZCU',
 
-        parkList: [
+        neighborList: [
             new Location('京都格蘭比亞大酒店', {
                 lat: 34.9859964,
                 lng: 135.7597823
@@ -76,7 +76,35 @@ $(function () {
             new Location('らーめん千の風京都', {
                 lat: 35.004578,
                 lng: 135.76753
-            }, '餐厅')
+            }, '餐厅'),
+            new Location('おおつか', {
+                lat: 35.018877,
+                lng: 135.677635
+            }, '餐厅'),
+            new Location('三条大宮公', {
+                lat: 35.0083099,
+                lng: 135.748546
+            }, '公园'),
+            new Location('新京極六角公園', {
+                lat: 35.0073235,
+                lng: 135.7672234
+            }, '公园'),
+            new Location('円山公園', {
+                lat: 35.0038803,
+                lng: 135.7809168
+            }, '公园'),
+            new Location('岡崎公園', {
+                lat: 35.0142667,
+                lng: 135.7828559
+            }, '公园'),
+            new Location('梅小路公園', {
+                lat: 34.9866391,
+                lng: 135.7453352
+            }, '公园'),
+            new Location('東山山頂公園', {
+                lat: 35.0000875,
+                lng: 135.7886096
+            }, '公园'),
         ]
     };
 
@@ -86,7 +114,7 @@ $(function () {
         var mq = window.matchMedia('(max-width: ' + smallScreenSize + 'px)');
 
         // 渲染列表数据，使用数组的复制防止remove方法修改原始数据
-        this.locations = ko.observableArray(o.getParkList().slice());
+        this.locations = ko.observableArray(o.getNeighborList().slice());
         // 筛选列表数据
         this.inputText = ko.observable('');
         // 响应式侧边栏
@@ -118,13 +146,13 @@ $(function () {
         };
         this.resetData = function () {
             this.locations.removeAll();
-            var dataCopy = o.getParkList().slice();
+            var dataCopy = o.getNeighborList().slice();
             this.locations(dataCopy);
         };
         this.resetMapView = function () {
             o.hideMarkers(o.getMarkers());
             o.hideMarkers(o.getTempMarker());
-            mapView.parkMarkers = o.setMarkers(this.locations());
+            mapView.neighborMarkers = o.setMarkers(this.locations());
             // 根据新的locations数组重新设置标记
             o.showMarkers(o.getMarkers());
         };
@@ -163,17 +191,13 @@ $(function () {
                 self.listHide(mq.matches);
             });
         }());
-        this.test = function () {
-            var a =
-                console.log('1');
-        };
     };
 
     var mapModule = {
 
         Map: function (node) {
             this.mapOption = {
-                center: o.getParkList()[0].location,
+                center: o.getNeighborList()[0].location,
                 zoom: 14
             };
             this.map = new google.maps.Map(node, this.mapOption);
@@ -250,20 +274,20 @@ $(function () {
 
         initMap: function () {
             var self = this;
-            // 初始化并显示parkMap
-            this.parkMap = o.setMap(document.getElementById('map'));
+            // 初始化并显示neighborMap
+            this.neighborMap = o.setMap(document.getElementById('map'));
             // 初始化infoWindow
-            this.parkInfoWindow = o.setInfoWindow();
+            this.neighborInfoWindow = o.setInfoWindow();
             // infoWindow点击事件
-            this.parkInfoWindow.addListener('closeclick', function () {
+            this.neighborInfoWindow.addListener('closeclick', function () {
                 this.marker = null;
             });
-            // 初始化parkMarkers
-            this.parkMarkers = o.setMarkers(o.getParkList().slice());
+            // 初始化neighborMarkers
+            this.neighborMarkers = o.setMarkers(o.getNeighborList().slice());
             // 初始化geocoder
-            this.parkGeocoder = o.setGeocoder();
-            // 在parkMap上显示parkMarkers
-            o.showMarkers(this.parkMarkers);
+            this.neighborGeocoder = o.setGeocoder();
+            // 在neighborMap上显示neighborMarkers
+            o.showMarkers(this.neighborMarkers);
             // 初始化一个临时marker
             this.tempMarker = o.setTempMarker();
             this.streetViewService = o.setStreetViewService();
@@ -280,8 +304,8 @@ $(function () {
 
         API_KEY: data.API_KEY,
 
-        getParkList: function () {
-            return data.parkList;
+        getNeighborList: function () {
+            return data.neighborList;
         },
 
         setMap: function (node) {
@@ -289,7 +313,7 @@ $(function () {
         },
 
         getMap: function () {
-            return mapView.parkMap;
+            return mapView.neighborMap;
         },
 
         setMarkers: function (dataList) {
@@ -297,7 +321,7 @@ $(function () {
         },
 
         getMarkers: function () {
-            return mapView.parkMarkers;
+            return mapView.neighborMarkers;
         },
 
         setTempMarker: function () {
@@ -313,7 +337,7 @@ $(function () {
         },
 
         getInfoWindow: function () {
-            return mapView.parkInfoWindow;
+            return mapView.neighborInfoWindow;
         },
 
         setGeocoder: function () {
@@ -321,7 +345,7 @@ $(function () {
         },
 
         getGeocoder: function () {
-            return mapView.parkGeocoder;
+            return mapView.neighborGeocoder;
         },
 
         setStreetViewService: function () {
@@ -368,7 +392,7 @@ $(function () {
          * @param {Marker} marker 被点击的marker
          * @param {string} content 显示在infoWindow中的内容
          */
-        showParkInfoWindow: function (marker, content) {
+        showNeighborInfoWindow: function (marker, content) {
             this.getInfoWindow().setContent(content);
             this.getInfoWindow().open(this.getMap(), marker);
         },
@@ -409,7 +433,7 @@ $(function () {
                         // 根据返回的数据生成显示在infowindow中的content
                         content = self.setInfoWindowContent(marker, results[0]);
                         // 显示infowindow
-                        self.showParkInfoWindow(marker, content);
+                        self.showNeighborInfoWindow(marker, content);
                         // 移动地图中心
                         self.getMap().setCenter(marker.position);
                         // 显示streetview
@@ -420,7 +444,7 @@ $(function () {
                         });
                     } else {
                         content = 'No results found';
-                        self.showParkInfoWindow(marker, content);
+                        self.showNeighborInfoWindow(marker, content);
                     }
                 } else {
                     window.alert('Geocoder failed due to: ' + status);
@@ -428,17 +452,17 @@ $(function () {
             });
         },
 
-        placeServiceDetails: function (park) {
+        placeServiceDetails: function (neighbor) {
             var self = this;
             var placeService = o.setPlaceService();
             var request = {
-                placeId: park.placeID()
+                placeId: neighbor.placeID()
             };
             placeService.getDetails(request, function (result, status) {
                 if (status === google.maps.places.PlacesServiceStatus.OK) {
                     if (result) {
                         console.log(result);
-                        park.formatted_address(result.formatted_address);
+                        neighbor.formatted_address(result.formatted_address);
                         var tempMarker = o.getTempMarker();
                         // 为临时标记设置属性
                         tempMarker.setOptions({
@@ -462,23 +486,25 @@ $(function () {
             });
         },
 
-        setListDetails: function (park) {
+        setListDetails: function (neighbor) {
+
             var self = this;
-            var position = park.location;
+            var position = neighbor.location;
             var url = 'https://maps.googleapis.com/maps/api/streetview?size=48x48&location=' +
                 position.lat + ',' + position.lng +
                 '&fov=90&heading=235&pitch=10' +
                 '&key=' + o.API_KEY;
-            park.streetViewImageSrc(url);
-            // TODO: query
+
+            neighbor.streetViewImageSrc(url);
+
             var geocoder = o.setGeocoder();
             geocoder.geocode({
                 location: position
             }, function (results, status) {
                 if (status === google.maps.GeocoderStatus.OK) {
                     if (results[0]) {
-                        park.placeID(results[0].place_id);
-                        self.placeServiceDetails(park);
+                        neighbor.placeID(results[0].place_id);
+                        self.placeServiceDetails(neighbor);
                     } else {
                         window.alert('No result found');
                     }
@@ -490,7 +516,7 @@ $(function () {
         },
 
         http: function (location) {
-            console.log(location);
+
             var options = {
                 "api_key": "6e4f689c112876a5aa5164dceee734af",
                 "method": "flickr.photos.search",
@@ -498,7 +524,7 @@ $(function () {
                 "nojsoncallback": "1",
                 "lat": location.lat(),
                 "lon": location.lng(),
-                "radius": 1,
+                "radius": 5,
             };
 
             var makeFlickrRequest = function (options, cb) {
@@ -519,7 +545,6 @@ $(function () {
             };
 
             makeFlickrRequest(options, function (data) {
-                console.log(data);
                 var image = document.getElementById('image');
                 var info = document.getElementById('flickrInfo');
                 if (data.photos.photo[0]) {
@@ -540,6 +565,6 @@ $(function () {
         }
     };
 
-    o.initApp();
+    google.maps.event.addDomListener(window, 'load', o.initApp());
 
-});
+}());

@@ -37,4 +37,9 @@ input[type=button] {
     background: #3390df;
     color: #fff;
     padding: 5px;
+    cursor: pointer;
+}
+
+button {
+    cursor: pointer;
 }

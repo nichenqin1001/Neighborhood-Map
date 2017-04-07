@@ -4,6 +4,13 @@
 
 地图应用使用`webpack`构建，使用`webpack-dev-server`在`localhost:8080`端口使用
 
+### 框架和依赖
+
+- 使用`knockout`管理页面列表渲染
+- 使用`Google Map`API渲染地图
+- 使用`jQuery`进行ajax请求`flickr`图片
+- 使用IScroll插件代替列表滚动
+
 ```bash
 yarn install
 ```
@@ -18,13 +25,6 @@ yarn run dev
 
 ## 功能和特点
 
-### 框架和依赖
-
-- 使用`knockout`管理页面列表渲染
-- 使用`Google Map`API渲染地图
-- 使用`jQuery`进行ajax请求`flickr`图片
-- 使用IScroll插件代替列表滚动
-
 ### 响应式
 
 - 使用css`media query`在`400px`以下屏幕设置更窄的列表框
@@ -34,7 +34,7 @@ yarn run dev
 
 - 点击列表内容时会`place service`获取详细地址及静态图片显示在列表中
 - 点击列表或者`marker`显示在`infowindow`中显示地址、街景
-- 点击infowindow中*Flickr图片*按钮在右下角显示该地点的flickr图片
+- 点击`infowindow`中*Flickr图片*按钮在右下角显示该地点的`flickr`图片
 - 筛选按钮可以筛选地点类型，并重置地图标记
 - 重置按钮可以重设列表和地图
 - 点击切换地图列表显示的按钮地图重新加载
