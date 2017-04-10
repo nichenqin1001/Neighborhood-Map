@@ -7,6 +7,8 @@ require('iscroll');
 
     'use strict';
 
+    var Gmap = document.getElementById('map');
+
     var Location = function (name, locationObj, type) {
         this.name = name;
         this.location = locationObj;
@@ -119,6 +121,11 @@ require('iscroll');
         this.inputText = ko.observable('');
         // 响应式侧边栏
         this.listHide = ko.observable(mq.matches);
+        // 设置按钮箭头
+        this.btnVal = ko.computed(function () {
+            return self.listHide() ? '\u25BA' : '\u25C4';
+        });
+
         // 使用iscroll插件代替滚动条
         this.setIScrollPlugin = function (elements) {
             var scroll = new IScroll(elements[0].parentElement, {
@@ -275,7 +282,7 @@ require('iscroll');
         initMap: function () {
             var self = this;
             // 初始化并显示neighborMap
-            this.neighborMap = o.setMap(document.getElementById('map'));
+            this.neighborMap = o.setMap(Gmap);
             // 初始化infoWindow
             this.neighborInfoWindow = o.setInfoWindow();
             // infoWindow点击事件
@@ -548,9 +555,7 @@ require('iscroll');
                 var image = document.getElementById('image');
                 var info = document.getElementById('flickrInfo');
                 if (data.photos.photo[0]) {
-                    var photo = data.photos.photo[0];
-                    var url = 'http://c1.staticflickr.com/' +
-                        photo.farm + '/' +
+                    photo.farm + '/' +
                         photo.server + '/' +
                         photo.id + '_' + photo.secret +
                         '.jpg';
@@ -565,6 +570,6 @@ require('iscroll');
         }
     };
 
-    google.maps.event.addDomListener(window, 'load', o.initApp());
+    o.initApp();
 
 }());
