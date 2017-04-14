@@ -18600,6 +18600,14 @@ __webpack_require__(1);
         this.locations = ko.observableArray(o.getNeighborList().slice());
         // 筛选列表数据
         this.inputText = ko.observable('');
+        this.filteredLocationList = ko.computed(function () {
+            if (!self.inputText) { return self.locations() } else {
+                return ko.utils.arrayFilter(self.locations(), function (location) {
+                    return location.name.toLowerCase().indexOf(self.inputText().toLowerCase()) !== -1 ||
+                        location.type.toLowerCase().indexOf(self.inputText().toLowerCase()) !== -1;
+                })
+            }
+        })
         // 响应式侧边栏
         this.listHide = ko.observable(mq.matches);
         // 设置按钮箭头
@@ -18632,10 +18640,8 @@ __webpack_require__(1);
             o.hideMarkers(o.getMarkers());
             o.setListDetails(this);
         };
-        this.resetData = function () {
-            this.locations.removeAll();
-            var dataCopy = o.getNeighborList().slice();
-            this.locations(dataCopy);
+        this.resetList = function () {
+            this.inputText('');
         };
         this.resetMapView = function () {
             o.hideMarkers(o.getMarkers());
@@ -18644,23 +18650,9 @@ __webpack_require__(1);
             // 根据新的locations数组重新设置标记
             o.showMarkers(o.getMarkers());
         };
-        // 筛选事件
-        this.onFilter = function () {
-            this.resetData();
-            var inputText = this.inputText();
-            if (!inputText) return;
-            // 如果location的type值于输入不同，则删除该记录
-            this.locations.remove(function (location) {
-                return location.type !== inputText;
-            });
-            if (mq.matches) self.listHide(true);
-            // 隐藏所有标记
-            this.resetMapView();
-
-        };
         // 重置
         this.reSet = function () {
-            this.resetData();
+            this.resetList();
             if (mq.matches) self.listHide(true);
             // 重新渲染列表为数据的复制
             this.resetMapView();
@@ -19012,7 +19004,7 @@ __webpack_require__(1);
                 "nojsoncallback": "1",
                 "lat": location.lat(),
                 "lon": location.lng(),
-                "radius": 5,
+                "radius": 1,
             };
 
             var makeFlickrRequest = function (options, cb) {
@@ -19027,15 +19019,22 @@ __webpack_require__(1);
 
                 $.get(url, cb)
                     .fail(function () {
-                        window.alert('ajax fail');
+                        window.alert('Failed to get photo! Please check your internet connection!');
                     });
 
             };
 
             makeFlickrRequest(options, function (data) {
                 var image = document.getElementById('image');
+                image.setAttribute('src', '');
                 var info = document.getElementById('flickrInfo');
-                if (data.photos.photo[0]) {
+                var photo = data.photos.photo[0];
+                if (photo) {
+                    var url = 'http://c1.staticflickr.com/' +
+                        photo.farm + '/' +
+                        photo.server + '/' +
+                        photo.id + '_' + photo.secret +
+                        '.jpg';
                     photo.farm + '/' +
                         photo.server + '/' +
                         photo.id + '_' + photo.secret +

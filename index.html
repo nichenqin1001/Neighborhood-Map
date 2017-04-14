@@ -15,7 +15,6 @@
                 <input class="form__text" type="text" data-bind="value: inputText" placeholder="例如：酒店、公园、餐厅">
                 <div class="form__filter">
                     <input class="form__filter_button" type="button" value="重置" data-bind="click: reSet">
-                    <input class="form__filter_button" type="button" value="筛选" data-bind="click: onFilter">
                 </div>
             </div>
             <div id="list" data-bind="template: { name: 'list__body', afterRender: setIScrollPlugin }"></div>
@@ -28,7 +27,7 @@
     </div>
 
     <script type="text/html" id="list__body">
-        <ul class="list__locations" data-bind="foreach: locations">
+        <ul class="list__locations" data-bind="foreach: filteredLocationList">
             <li class="list__locations__location" data-bind="click: $parent.onListClick, css: { active: $data.active }">
                 <div class="list__text">
                     <div class="list__locations__address" data-bind="text: $data.name"></div>
