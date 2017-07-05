@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Neighborhood-Map</title>
+</head>
+
+<body>
+    <div class="container">
+        <div id="list__container" data-bind="css: { list_hide: listHide }">
+            <div id="form">
+                <input class="form__text" type="text" data-bind="value: inputText" placeholder="例如：酒店、公园、餐厅">
+                <div class="form__filter">
+                    <input class="form__filter_button" type="button" value="重置" data-bind="click: reSet">
+                </div>
+            </div>
+            <div id="list" data-bind="template: { name: 'list__body', afterRender: setIScrollPlugin }"></div>
+        </div>
+        <nav id="nav" data-bind="css: {full_page: listHide}">
+            <button class="nav__toggle" type="button" data-bind="click: toggleList, text: btnVal"></button>
+        </nav>
+        <div id="map" class="map" data-bind="css: { full_page: listHide }"></div>
+        <img alt="" id="image">
+    </div>
+
+    <script type="text/html" id="list__body">
+        <ul class="list__locations" data-bind="foreach: filteredLocationList">
+            <li class="list__locations__location" data-bind="click: $parent.onListClick, css: { active: $data.active }">
+                <div class="list__text">
+                    <div class="list__locations__address" data-bind="text: $data.name"></div>
+                    <div class="list__locations__formatted_address_container" data-bind="if: $data.active,">
+                        <div class="list__locations__formatted_address" data-bind="text: $data.formatted_address"></div>
+                    </div>
+                </div>
+                <div class="list__img" data-bind="if: $data.active">
+                    <img data-bind="attr: { src: $data.streetViewImageSrc }">
+                </div>
+            </li>
+        </ul>
+    </script>
+
+    <script>
+        function googleError() {
+            'use strict';
+            document.getElementById('map').innerHTML =
+                'failed to load google map, please check you connection or proxy setting';
+        }
+        window.googleError = googleError;
+    </script>
+    <script src="http://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyBCTcVF27rnK-9_vovt47HzeUIQtUAYZCU&sensor=false"
+        onerror="googleError()"></script>
+<script type="text/javascript" src="js/main.bundle.js"></script></body>
+
+</html>
